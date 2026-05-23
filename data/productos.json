@@ -1,72 +1,70 @@
 {
-  "version": "2026-05-22",
+  "version": "2026-05-23",
   "whatsappNumber": "5355551234",
+  "redesSociales": {
+    "facebook": "https://facebook.com/migarajecuba",
+    "instagram": "https://instagram.com/migarajecuba"
+  },
   "productos": [
     {
       "id": "mesa-pino-001",
       "nombre": "Mesa de pino restaurada",
       "descripcion": "Mesa de pino macizo, año 1960, patas originales restauradas. Medidas: 120x70 cm. Ideal para comedor pequeño. Pequeñas marcas que le dan carácter vintage.",
-      "precioCUP": 8500,
-      "precioUSD": 32,
-      "imagen": "images/prod-001.webp",
-      "fecha": "2026-05-20",
-      "votos": 12,
-      "puntuacion": 4.2
+      "precio": 8500,
+      "moneda": "CUP",
+      "imagen": "images/mesa-pino-001.webp",
+      "categoria": "Muebles",
+      "fecha": "2026-05-20"
     },
     {
       "id": "lampara-art-deco-002",
       "nombre": "Lámpara Art Decó",
       "descripcion": "Lámpara de mesa estilo Art Decó, años 40. Pantalla de vidrio esmerilado, base de bronce restaurada. Funciona perfectamente. Altura 45 cm.",
-      "precioCUP": 3200,
-      "precioUSD": 12,
-      "imagen": "images/prod-002.webp",
-      "fecha": "2026-05-19",
-      "votos": 8,
-      "puntuacion": 4.5
-    },
-    {
-      "id": "lampara-art-deco-002",
-      "nombre": "Lámpara Art Decó",
-      "descripcion": "Lámpara de mesa estilo Art Decó, años 40. Pantalla de vidrio esmerilado, base de bronce restaurada. Funciona perfectamente. Altura 45 cm.",
-      "precioCUP": 3200,
-      "precioUSD": 12,
-      "imagen": "prod-002.webp",
-      "fecha": "2026-05-19",
-      "votos": 8,
-      "puntuacion": 4.5
+      "precio": 3200,
+      "moneda": "CUP",
+      "imagen": "images/lampara-art-deco-002.webp",
+      "categoria": "Decoración",
+      "fecha": "2026-05-19"
     },
     {
       "id": "sillon-chester-003",
       "nombre": "Sillón Chesterfield",
       "descripcion": "Sillón estilo Chesterfield, tapizado en terciopelo burdeos. Madera maciza, patas torneadas. Muy cómodo. Medidas: 80x90x100 cm. Ideal para sala o biblioteca.",
-      "precioCUP": 18500,
-      "precioUSD": 70,
+      "precio": 18500,
+      "moneda": "CUP",
       "imagen": "images/sillon-chester-003.webp",
-      "fecha": "2026-05-18",
-      "votos": 15,
-      "puntuacion": 4.8
+      "categoria": "Muebles",
+      "fecha": "2026-05-18"
     },
     {
       "id": "radio-vintage-004",
       "nombre": "Radio vintage años 50",
       "descripcion": "Radio de mesa marca Philips, años 50. Gabinete de madera restaurado. Funciona AM/FM. Conserva su diseño original. Ideal para coleccionistas o decoración retro.",
-      "precioCUP": 4200,
-      "precioUSD": 16,
+      "precio": 4200,
+      "moneda": "CUP",
       "imagen": "images/radio-vintage-004.webp",
-      "fecha": "2026-05-17",
-      "votos": 6,
-      "puntuacion": 3.9
+      "categoria": "Electrónica",
+      "fecha": "2026-05-17"
     },
     {
       "id": "cuadro-paisaje-005",
       "nombre": "Cuadro paisaje cubano",
       "descripcion": "Pintura al óleo, autor local desconocido. Representa paisaje del Valle de Viñales. Marco de madera tallada. Medidas: 60x80 cm. Año aproximado 1980.",
-      "precioCUP": 2800,
-      "precioUSD": 10,
+      "precio": 2800,
+      "moneda": "CUP",
       "imagen": "images/cuadro-paisaje-005.webp",
-      "fecha": "2026-05-16",
-      "votos": 9,
-      "puntuacion": 4.4
+      "categoria": "Arte",
+      "fecha": "2026-05-16"
+    },
+    {
+      "id": "maquina-escribir-006",
+      "nombre": "Máquina de escribir Olivetti",
+      "descripcion": "Máquina de escribir mecánica Olivetti Lettera 32, años 60. Totalmente funcional, restaurada. Incluye su estuche original. Ideal para decoración o colección.",
+      "precio": 9500,
+      "moneda": "CUP",
+      "imagen": "images/maquina-escribir-006.webp",
+      "categoria": "Coleccionables",
+      "fecha": "2026-05-15"
     }
   ]
 }
