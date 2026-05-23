@@ -1,15 +1,15 @@
 // ==================================================
 // sw.js - SERVICE WORKER PARA MI GARAJE
-// Estrategia: cache-first para recursos estáticos y datos
-// Permite navegación completa sin internet
+// CORREGIDO: Evita error 404 después de instalar la PWA
 // ==================================================
 
-const CACHE_NAME = 'mi-garaje-v3';
+const CACHE_NAME = 'mi-garaje-v2'; // ← Cambiado a v2 para forzar actualización
 
 // Archivos a precachear durante la instalación
 const ARCHIVOS_PRECACHE = [
   '/',
-  '/Proyecto Mi Garaje/index.html',
+  '/index.html',
+  '/404.html',           // ← CLAVE: añadido para evitar 404
   '/css/style.css',
   '/js/app.js',
   '/js/sw-register.js',
@@ -23,7 +23,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('📦 Archivos precacheados');
+        console.log('📦 Archivos precacheados:', ARCHIVOS_PRECACHE);
         return cache.addAll(ARCHIVOS_PRECACHE);
       })
       .then(() => self.skipWaiting())
@@ -51,8 +51,20 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
+  // 🔥 NUEVO: Si es una petición a una ruta que NO es un archivo real
+  // (ej. /productos, /categoria, etc.) devolver index.html
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        // Si falla la red, devolver index.html desde caché
+        return caches.match('/index.html');
+      })
+    );
+    return;
+  }
+  
   // Para imágenes: cache-first, actualizar en segundo plano
-  if (url.pathname.includes('/images/')) {
+  if (url.pathname.includes('/images/') || url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
     event.respondWith(
       caches.match(event.request).then(respuestaCache => {
         const respuestaRed = fetch(event.request).then(respuestaRed => {
@@ -81,7 +93,6 @@ self.addEventListener('fetch', event => {
           });
           return respuestaRed;
         }).catch(() => {
-          // Si no hay red, devolver caché (puede ser vieja, pero algo)
           return respuestaCache;
         });
         
@@ -89,19 +100,22 @@ self.addEventListener('fetch', event => {
       })
     );
   }
-  // Para HTML, CSS, JS: cache-first
+  // Para HTML, CSS, JS, manifest, etc.
   else {
     event.respondWith(
       caches.match(event.request).then(respuestaCache => {
         return respuestaCache || fetch(event.request).then(respuestaRed => {
-          const copia = respuestaRed.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copia);
-          });
+          // Solo cachear respuestas exitosas
+          if (respuestaRed.status === 200) {
+            const copia = respuestaRed.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, copia);
+            });
+          }
           return respuestaRed;
         });
       }).catch(() => {
-        // Si todo falla y es navegación, mostrar index.html
+        // Si todo falla, devolver index.html para navegación
         if (event.request.mode === 'navigate') {
           return caches.match('/index.html');
         }
