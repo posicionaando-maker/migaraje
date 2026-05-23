@@ -3,7 +3,7 @@
 // CORREGIDO: Evita error 404 después de instalar la PWA
 // ==================================================
 
-const CACHE_NAME = 'mi-garaje-v2'; // ← Cambiado a v2 para forzar actualización
+const CACHE_NAME = 'mi-garaje-v3'; // ← Cambiado a v3 para forzar actualización
 
 // Archivos a precachear durante la instalación
 const ARCHIVOS_PRECACHE = [
