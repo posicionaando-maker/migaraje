@@ -4,7 +4,7 @@
 // Permite navegación completa sin internet
 // ==================================================
 
-const CACHE_NAME = 'mi-garaje-v1';
+const CACHE_NAME = 'mi-garaje-v2';
 
 // Archivos a precachear durante la instalación
 const ARCHIVOS_PRECACHE = [
