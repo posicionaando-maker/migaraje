@@ -1,6 +1,7 @@
 // ==================================================
 // sw-register.js - REGISTRO DEL SERVICE WORKER
-// Permite que la PWA funcione offline después de la primera carga
+// Habilita la funcionalidad offline de la PWA
+// Se ejecuta independientemente del resto de la app
 // ==================================================
 
 if ('serviceWorker' in navigator) {
@@ -9,14 +10,15 @@ if ('serviceWorker' in navigator) {
       .then(registration => {
         console.log('✅ Service Worker registrado. La app funcionará offline.');
         
-        // Detectar actualizaciones
+        // Detectar actualizaciones del Service Worker
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
-          console.log('🔄 Nueva versión detectada');
+          console.log('🔄 Nueva versión del Service Worker detectada');
+          
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('✅ Actualización disponible. Recarga la página.');
-              // Podrías mostrar un mensaje al usuario aquí
+              console.log('✅ Actualización disponible. Recarga la página para aplicar cambios.');
+              // Podrías mostrar un mensaje al usuario aquí si quieres
             }
           });
         });
