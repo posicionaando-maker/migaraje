@@ -1,0 +1,526 @@
+/* ==============================================
+   MI GARAJE - ESTILOS PRINCIPALES
+   Incluye modo claro (por defecto) y modo oscuro
+   Optimizado para móviles lentos y pantallas pequeñas
+   Compatibilidad asegurada con navegadores modernos
+   ============================================== */
+
+/* ---------- VARIABLES GLOBALES (modo claro) ---------- */
+:root {
+  /* Colores principales */
+  --verde-whatsapp: #25D366;
+  --verde-oscuro: #075E54;
+  --fondo: #f5f5f5;
+  --fondo-tarjeta: #ffffff;
+  --texto: #333333;
+  --texto-secundario: #666666;
+  --borde: #dddddd;
+  --sombra: rgba(0,0,0,0.1);
+  --estrella-llena: #f39c12;
+  --estrella-vacia: #dddddd;
+  --admin-bg: #ffffff;
+}
+
+/* ---------- VARIABLES MODO OSCURO ---------- */
+body.dark-mode {
+  --fondo: #121212;
+  --fondo-tarjeta: #1e1e1e;
+  --texto: #e0e0e0;
+  --texto-secundario: #aaaaaa;
+  --borde: #333333;
+  --sombra: rgba(255,255,255,0.05);
+  --estrella-vacia: #444444;
+  --admin-bg: #2d2d2d;
+}
+
+/* Reset básico para consistencia entre navegadores */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+  padding-bottom: 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* ========== CABECERA ========== */
+header {
+  background-color: var(--verde-oscuro);
+  color: white;
+  padding: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 5px var(--sombra);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+/* Botones de íconos en cabecera */
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Campo de búsqueda desplegable */
+.search-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#searchInput {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  background-color: white;
+  color: #333;
+}
+
+.clear-search {
+  background: #e74c3c;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: white;
+}
+
+/* Barra de herramientas (ordenamiento) */
+.toolbar {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sort-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+}
+
+.sort-btn.active {
+  background: white;
+  color: var(--verde-oscuro);
+  font-weight: bold;
+}
+
+.result-count {
+  font-size: 0.75rem;
+  background: rgba(0,0,0,0.3);
+  padding: 4px 8px;
+  border-radius: 15px;
+}
+
+/* ========== BARRA DE PROGRESO ========== */
+.progress-container {
+  margin: 15px;
+  background-color: var(--borde);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background-color: var(--verde-whatsapp);
+  transition: width 0.3s;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 5px;
+  color: var(--texto-secundario);
+}
+
+/* ========== GRID DE PRODUCTOS ========== */
+.productos-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  padding: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Tarjeta de producto */
+.producto-card {
+  background-color: var(--fondo-tarjeta);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--sombra);
+  transition: transform 0.1s;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-card:active {
+  transform: scale(0.99);
+}
+
+/* Imagen del producto */
+.producto-imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: var(--borde);
+}
+
+/* Contenido de la tarjeta */
+.producto-info {
+  padding: 12px;
+  flex: 1;
+}
+
+.producto-nombre {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: var(--texto);
+}
+
+.producto-precio {
+  color: var(--verde-oscuro);
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 5px 0;
+}
+
+body.dark-mode .producto-precio {
+  color: var(--verde-whatsapp);
+}
+
+/* ==============================================
+   TRUNCADO DE DESCRIPCIONES (COMPATIBILIDAD TOTAL)
+   -webkit-line-clamp: para Chrome, Safari, Android, iOS
+   line-clamp: estándar para Firefox y navegadores futuros
+   ============================================== */
+.producto-descripcion {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  margin: 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;  /* Propiedad estándar CSS */
+  overflow: hidden;
+}
+
+/* Estrellas de valoración */
+.estrellas-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.estrellas {
+  display: inline-flex;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.estrellas.votado {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.estrella {
+  font-size: 1.2rem;
+  transition: transform 0.1s;
+}
+
+.estrellas:not(.votado) .estrella:hover {
+  transform: scale(1.1);
+}
+
+.estrella.llena {
+  color: var(--estrella-llena);
+}
+
+.estrella.vacia {
+  color: var(--estrella-vacia);
+}
+
+.puntuacion-texto {
+  font-size: 0.75rem;
+  color: var(--texto-secundario);
+}
+
+/* Botones de la tarjeta */
+.card-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ver-mas-btn, .whatsapp-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.ver-mas-btn {
+  background-color: var(--borde);
+  color: var(--texto);
+}
+
+.whatsapp-btn {
+  background-color: var(--verde-whatsapp);
+  color: white;
+}
+
+/* ========== PAGINACIÓN ========== */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.page-btn {
+  background-color: var(--verde-oscuro);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: var(--texto);
+}
+
+/* ========== MODAL DE PRODUCTO ========== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: var(--fondo-tarjeta);
+  margin: 50px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 15px;
+  animation: modalEntrada 0.2s ease-out;
+}
+
+@keyframes modalEntrada {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close-modal, .close-admin-modal {
+  float: right;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--texto-secundario);
+}
+
+.close-modal:hover, .close-admin-modal:hover {
+  color: var(--texto);
+}
+
+.modal-imagen {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-botones {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ========== MODAL ADMIN ========== */
+.admin-modal .modal-content {
+  max-width: 90%;
+  width: auto;
+}
+
+.admin-content {
+  background-color: var(--admin-bg);
+}
+
+#adminStats {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 20px 0;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stats-table th, .stats-table td {
+  border: 1px solid var(--borde);
+  padding: 8px;
+  text-align: left;
+}
+
+.stats-table th {
+  background-color: var(--verde-oscuro);
+  color: white;
+}
+
+.copy-stats-btn {
+  background-color: var(--verde-whatsapp);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+}
+
+/* ========== MENSAJE OFFLINE ========== */
+.offline-msg {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f39c12;
+  color: #333;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.8rem;
+  z-index: 30;
+}
+
+/* ========== ESTADO DE CARGA ========== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--texto-secundario);
+  grid-column: 1 / -1;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (min-width: 768px) {
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .productos-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 360px) {
+  .producto-nombre {
+    font-size: 1rem;
+  }
+  
+  .sort-btn {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  .card-buttons {
+    flex-direction: column;
+  }
+}
