@@ -3,78 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Mi Catálogo Cuba | Productos por WhatsApp</title>
+  <title>Mi Garaje | Hallazgos únicos en Cuba</title>
   
-  <!-- Meta tags para SEO y redes sociales -->
-  <meta name="description" content="Catálogo de productos en Cuba. Venta por WhatsApp. Zapatos, sandalias, mochilas y más. Envíos a toda la isla.">
-  <meta name="keywords" content="catálogo Cuba, venta WhatsApp, productos Cuba, zapatos, sandalias, mochilas">
-  <meta name="author" content="Tu Nombre">
+  <!-- ==============================================
+       META TAGS PARA SEO Y REDES SOCIALES
+       Mejoran el posicionamiento en Google y la vista previa al compartir
+  ================================================== -->
+  <meta name="description" content="Mi Garaje - Venta de hallazgos únicos en Cuba. Muebles restaurados, lámparas vintage, decoración. Envíos a toda la isla. Contacta por WhatsApp.">
+  <meta name="keywords" content="venta de garaje Cuba, muebles vintage, lámparas antiguas, decoración Cuba, hallazgos únicos">
+  <meta name="author" content="Mi Garaje">
   
-  <!-- Open Graph para compartir en WhatsApp/Facebook/Telegram -->
-  <meta property="og:title" content="Mi Catálogo Cuba | Productos por WhatsApp">
-  <meta property="og:description" content="Catálogo de productos en Cuba. Consulta precios y disponibilidad por WhatsApp.">
-  <meta property="og:image" content="https://tusuario.github.io/mi-catalogo/images/logo-preview.jpg">
-  <meta property="og:url" content="https://tusuario.github.io/mi-catalogo/">
+  <!-- Open Graph para compartir en WhatsApp, Facebook, Telegram -->
+  <meta property="og:title" content="Mi Garaje | Hallazgos únicos en Cuba">
+  <meta property="og:description" content="Productos únicos, restaurados y con historia. Consulta por WhatsApp.">
+  <meta property="og:image" content="https://tusuario.github.io/mi-garaje/images/logo-preview.jpg">
+  <meta property="og:url" content="https://tusuario.github.io/mi-garaje/">
   <meta property="og:type" content="website">
   
-  <!-- Tema de color para la barra de direcciones (Android) -->
+  <!-- Color de la barra de direcciones en Android (verde WhatsApp para confianza) -->
   <meta name="theme-color" content="#075E54">
   
-  <!-- Para que la PWA sea instalable -->
+  <!-- Para que la PWA sea instalable en el teléfono -->
   <link rel="manifest" href="manifest.json">
   
-  <!-- Iconos para diferentes dispositivos -->
+  <!-- Icono para cuando se añade a la pantalla de inicio (Apple) -->
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   
   <!-- CSS principal -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Cabecera fija -->
+  <!-- ==============================================
+       CABECERA PRINCIPAL
+       Contiene título, botones de modo oscuro y búsqueda
+  ================================================== -->
   <header>
-    <h1>📦 Mi Catálogo Cuba</h1>
-    <p>Productos de calidad | Envíos a toda la isla</p>
+    <div class="header-top">
+      <h1 id="mainTitle">🏠 Mi Garaje</h1>
+      <div class="header-buttons">
+        <!-- Botón modo oscuro (luna/sol) -->
+        <button id="darkModeToggle" class="icon-btn" aria-label="Modo oscuro">🌙</button>
+        <!-- Botón de búsqueda (lupa) -->
+        <button id="searchToggle" class="icon-btn" aria-label="Buscar">🔍</button>
+      </div>
+    </div>
+    
+    <!-- Campo de búsqueda (oculto por defecto, aparece al tocar la lupa) -->
+    <div id="searchContainer" class="search-container" style="display: none;">
+      <input type="text" id="searchInput" placeholder="🔍 Buscar en Mi Garaje... (nombre o descripción)" autocomplete="off">
+      <button id="clearSearch" class="clear-search" style="display: none;">✖️</button>
+    </div>
+    
+    <!-- Barra de herramientas: ordenamiento y contador de resultados -->
+    <div class="toolbar">
+      <div class="sort-buttons">
+        <button id="sortFecha" class="sort-btn active">🕒 Más reciente</button>
+        <button id="sortPuntuacion" class="sort-btn">⭐ Más votado</button>
+        <button id="sortPrecio" class="sort-btn">💰 Menor precio</button>
+      </div>
+      <div id="resultCount" class="result-count"></div>
+    </div>
   </header>
   
-  <!-- Barra de herramientas -->
-  <div class="toolbar">
-    <!-- Modo solo texto / imágenes -->
-    <button id="toggleModeBtn" class="mode-btn">📄 Modo solo texto</button>
+  <!-- ==============================================
+       CONTENEDOR PRINCIPAL
+       Muestra los productos en grid y la paginación
+  ================================================== -->
+  <main>
+    <!-- Barra de progreso de carga (se muestra mientras se descargan los productos) -->
+    <div id="progressContainer" class="progress-container" style="display: none;">
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div id="progressText" class="progress-text">Cargando productos...</div>
+    </div>
     
-    <!-- Botón para ver solo favoritos -->
-    <button id="showFavsBtn" class="fav-filter-btn">⭐ Mis favoritos</button>
-  </div>
+    <!-- Grid de productos (se llena con JavaScript) -->
+    <div id="productosContainer" class="productos-grid">
+      <div class="loading">Cargando catálogo...</div>
+    </div>
+    
+    <!-- Paginación (aparece solo si hay más de 10 productos) -->
+    <div id="paginationContainer" class="pagination-container" style="display: none;">
+      <button id="prevPage" class="page-btn" disabled>← Anterior</button>
+      <span id="pageInfo" class="page-info"></span>
+      <button id="nextPage" class="page-btn" disabled>Siguiente →</button>
+    </div>
+  </main>
   
-  <!-- Indicador de estado de conexión y sincronización -->
-  <div id="statusBar" class="status-bar online">
-    ✅ Conectado · Última actualización: <span id="lastUpdate">--/--/----</span>
-  </div>
-  
-  <!-- Contenedor de la lista de productos -->
-  <div id="productosContainer" class="productos-grid">
-    <!-- Aquí se cargarán dinámicamente los productos desde JavaScript -->
-    <div class="loading">Cargando catálogo...</div>
-  </div>
-  
-  <!-- Modal (ventana emergente) para ver detalles del producto -->
+  <!-- ==============================================
+       MODAL (ventana emergente) PARA VER DETALLES
+       Aparece cuando se hace clic en "Ver más" de un producto
+  ================================================== -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
       <div id="modalBody">
-        <!-- Aquí se carga el contenido del producto seleccionado -->
+        <!-- Aquí se carga el contenido dinámico del producto -->
       </div>
     </div>
   </div>
   
-  <!-- Mensaje para usuarios sin conexión (visible solo si es necesario) -->
-  <div id="offlineMsg" class="offline-msg" style="display: none;">
-    ⚠️ Estás offline. Los productos que ves son los últimos guardados.
+  <!-- ==============================================
+       MODAL ADMIN (sección secreta para el vendedor)
+       Aparece con doble clic en el título "Mi Garaje"
+  ================================================== -->
+  <div id="adminModal" class="modal admin-modal">
+    <div class="modal-content admin-content">
+      <span class="close-admin-modal">&times;</span>
+      <h2>📊 Estadísticas de votos (datos locales)</h2>
+      <div id="adminStats">
+        <!-- Aquí se carga la tabla de estadísticas -->
+      </div>
+      <button id="copyStatsBtn" class="copy-stats-btn">📋 Copiar al portapapeles</button>
+    </div>
   </div>
   
-  <!-- Archivos JavaScript -->
-  <!-- sw-register.js registra el Service Worker para funcionalidad offline -->
+  <!-- Mensaje offline (se muestra solo cuando no hay conexión) -->
+  <div id="offlineMsg" class="offline-msg" style="display: none;">
+    ⚠️ Sin conexión · Mostrando productos guardados en tu dispositivo
+  </div>
+  
+  <!-- ==============================================
+       SCRIPTS
+       sw-register.js: registra el Service Worker para modo offline
+       app.js: toda la lógica de la aplicación
+  ================================================== -->
   <script src="js/sw-register.js"></script>
-  <!-- app.js contiene toda la lógica de la aplicación -->
   <script src="js/app.js"></script>
 </body>
 </html>
