@@ -19,6 +19,18 @@
   <meta property="og:image" content="https://tusuario.github.io/mi-garaje/images/logo-preview.jpg">
   <meta property="og:url" content="https://tusuario.github.io/mi-garaje/">
   <meta property="og:type" content="website">
+<script>
+  // Restaurar ruta original después de redirección
+  (function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var ref = urlParams.get('ref');
+    if (ref) {
+      var newUrl = decodeURIComponent(ref);
+      window.history.replaceState({}, '', newUrl);
+    }
+  })();
+</script>
+
   
   <!-- Color de la barra de direcciones en Android (verde WhatsApp para confianza) -->
   <meta name="theme-color" content="#075E54">
