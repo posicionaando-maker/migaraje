@@ -9,8 +9,8 @@
        META TAGS PARA SEO Y REDES SOCIALES
        Mejoran el posicionamiento en Google y la vista previa al compartir
   ================================================== -->
-  <meta name="description" content="Mi Garaje - Venta de hallazgos únicos en Cuba. Muebles restaurados, lámparas vintage, decoración. Envíos a toda la isla. Contacta por WhatsApp.">
-  <meta name="keywords" content="venta de garaje Cuba, muebles vintage, lámparas antiguas, decoración Cuba, hallazgos únicos">
+  <meta name="description" content="Mi Garaje - Venta de hallazgos únicos en Cuba. Muebles restaurados, electrónica vintage, decoración. Envíos a toda la isla. Contacta por WhatsApp.">
+  <meta name="keywords" content="venta de garaje Cuba, muebles vintage, electrónica antigua, decoración Cuba, hallazgos únicos">
   <meta name="author" content="Mi Garaje">
   
   <!-- Open Graph para compartir en WhatsApp, Facebook, Telegram -->
@@ -19,23 +19,11 @@
   <meta property="og:image" content="https://tusuario.github.io/mi-garaje/images/logo-preview.jpg">
   <meta property="og:url" content="https://tusuario.github.io/mi-garaje/">
   <meta property="og:type" content="website">
-<script>
-  // Restaurar ruta original después de redirección
-  (function() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var ref = urlParams.get('ref');
-    if (ref) {
-      var newUrl = decodeURIComponent(ref);
-      window.history.replaceState({}, '', newUrl);
-    }
-  })();
-</script>
-
   
-  <!-- Color de la barra de direcciones en Android (verde WhatsApp para confianza) -->
-  <meta name="theme-color" content="#075E54">
+  <!-- Color de la barra de direcciones en Android -->
+  <meta name="theme-color" content="#FF6B35">
   
-  <!-- Para que la PWA sea instalable en el teléfono -->
+  <!-- Para que la PWA sea instalable -->
   <link rel="manifest" href="manifest.json">
   
   <!-- Icono para cuando se añade a la pantalla de inicio (Apple) -->
@@ -47,99 +35,122 @@
 <body>
   <!-- ==============================================
        CABECERA PRINCIPAL
-       Contiene título, botones de modo oscuro y búsqueda
+       Gradiente llamativo: naranja a amarillo
   ================================================== -->
   <header>
     <div class="header-top">
-      <h1 id="mainTitle">🏠 Mi Garaje</h1>
+      <div class="logo-area">
+        <h1 id="mainTitle">🏠 Mi Garaje</h1>
+        <span class="tagline">Hallazgos únicos en Cuba</span>
+      </div>
       <div class="header-buttons">
-        <!-- Botón modo oscuro (luna/sol) -->
-        <button id="darkModeToggle" class="icon-btn" aria-label="Modo oscuro">🌙</button>
-        <!-- Botón de búsqueda (lupa) -->
-        <button id="searchToggle" class="icon-btn" aria-label="Buscar">🔍</button>
+        <!-- Botón de actualización manual -->
+        <button id="updateBtn" class="icon-btn" aria-label="Actualizar catálogo">🔄</button>
+        <!-- Botón de redes sociales (despliega opciones) -->
+        <button id="socialBtn" class="icon-btn" aria-label="Redes sociales">📱</button>
       </div>
     </div>
     
-    <!-- Campo de búsqueda (oculto por defecto, aparece al tocar la lupa) -->
-    <div id="searchContainer" class="search-container" style="display: none;">
-      <input type="text" id="searchInput" placeholder="🔍 Buscar en Mi Garaje... (nombre o descripción)" autocomplete="off">
-      <button id="clearSearch" class="clear-search" style="display: none;">✖️</button>
+    <!-- Panel de redes sociales (oculto por defecto) -->
+    <div id="socialPanel" class="social-panel" style="display: none;">
+      <a href="#" id="shareProductBtn" class="social-link">📤 Compartir producto</a>
+      <a href="#" id="facebookLink" class="social-link" target="_blank">📘 Facebook</a>
+      <a href="#" id="instagramLink" class="social-link" target="_blank">📷 Instagram</a>
     </div>
     
-    <!-- Barra de herramientas: ordenamiento y contador de resultados -->
+    <!-- ==============================================
+         BUSCADOR CON AUTOCOMPLETAR (estilo Google)
+    ================================================== -->
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar en Mi Garaje..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-search" style="display: none;">✖️</button>
+      </div>
+      <!-- Lista desplegable de sugerencias -->
+      <div id="suggestionsList" class="suggestions-list" style="display: none;"></div>
+    </div>
+    
+    <!-- ==============================================
+         FILTROS Y CONTROLES
+    ================================================== -->
     <div class="toolbar">
-      <div class="sort-buttons">
-        <button id="sortFecha" class="sort-btn active">🕒 Más reciente</button>
-        <button id="sortPuntuacion" class="sort-btn">⭐ Más votado</button>
-        <button id="sortPrecio" class="sort-btn">💰 Menor precio</button>
+      <div class="filter-buttons">
+        <button id="filterAllBtn" class="filter-btn active">Todos</button>
+        <!-- Las categorías se cargarán dinámicamente desde el JSON -->
+        <div id="categoriasContainer" class="categorias-dinamicas"></div>
       </div>
-      <div id="resultCount" class="result-count"></div>
+      <div class="sort-controls">
+        <select id="sortSelect" class="sort-select">
+          <option value="fecha">🕒 Más reciente</option>
+          <option value="precio-asc">💰 Menor precio</option>
+          <option value="precio-desc">💰 Mayor precio</option>
+          <option value="nombre">🔤 Nombre A-Z</option>
+        </select>
+      </div>
     </div>
+    
+    <!-- Contador de resultados -->
+    <div id="resultCount" class="result-count"></div>
   </header>
   
   <!-- ==============================================
        CONTENEDOR PRINCIPAL
-       Muestra los productos en grid y la paginación
   ================================================== -->
   <main>
-    <!-- Barra de progreso de carga (se muestra mientras se descargan los productos) -->
+    <!-- Barra de progreso de carga -->
     <div id="progressContainer" class="progress-container" style="display: none;">
       <div class="progress-bar">
         <div id="progressFill" class="progress-fill"></div>
       </div>
-      <div id="progressText" class="progress-text">Cargando productos...</div>
+      <div id="progressText" class="progress-text">Cargando catálogo...</div>
     </div>
     
-    <!-- Grid de productos (se llena con JavaScript) -->
+    <!-- Grid de productos -->
     <div id="productosContainer" class="productos-grid">
       <div class="loading">Cargando catálogo...</div>
     </div>
     
-    <!-- Paginación (aparece solo si hay más de 10 productos) -->
+    <!-- Paginación estilo Amazon -->
     <div id="paginationContainer" class="pagination-container" style="display: none;">
       <button id="prevPage" class="page-btn" disabled>← Anterior</button>
-      <span id="pageInfo" class="page-info"></span>
+      <div id="pageNumbers" class="page-numbers"></div>
       <button id="nextPage" class="page-btn" disabled>Siguiente →</button>
     </div>
   </main>
   
   <!-- ==============================================
-       MODAL (ventana emergente) PARA VER DETALLES
-       Aparece cuando se hace clic en "Ver más" de un producto
-  ================================================== -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div id="modalBody">
-        <!-- Aquí se carga el contenido dinámico del producto -->
-      </div>
-    </div>
-  </div>
-  
-  <!-- ==============================================
-       MODAL ADMIN (sección secreta para el vendedor)
-       Aparece con doble clic en el título "Mi Garaje"
+       MODAL ADMIN (doble clic en título)
+       Panel del vendedor con estadísticas
   ================================================== -->
   <div id="adminModal" class="modal admin-modal">
     <div class="modal-content admin-content">
-      <span class="close-admin-modal">&times;</span>
-      <h2>📊 Estadísticas de votos (datos locales)</h2>
+      <div class="admin-header">
+        <h2>📊 Mi Garaje - Panel del Vendedor</h2>
+        <span class="close-admin-modal">&times;</span>
+      </div>
       <div id="adminStats">
-        <!-- Aquí se carga la tabla de estadísticas -->
+        <!-- Estadísticas se cargan dinámicamente -->
       </div>
       <button id="copyStatsBtn" class="copy-stats-btn">📋 Copiar al portapapeles</button>
     </div>
   </div>
   
-  <!-- Mensaje offline (se muestra solo cuando no hay conexión) -->
+  <!-- Mensaje de actualización disponible -->
+  <div id="updateNotification" class="update-notification" style="display: none;">
+    <span>🔄 ¡Hay productos nuevos! ¿Actualizar catálogo?</span>
+    <div>
+      <button id="confirmUpdate" class="update-yes">Sí, actualizar</button>
+      <button id="cancelUpdate" class="update-no">Ahora no</button>
+    </div>
+  </div>
+  
+  <!-- Mensaje offline -->
   <div id="offlineMsg" class="offline-msg" style="display: none;">
     ⚠️ Sin conexión · Mostrando productos guardados en tu dispositivo
   </div>
   
   <!-- ==============================================
        SCRIPTS
-       sw-register.js: registra el Service Worker para modo offline
-       app.js: toda la lógica de la aplicación
   ================================================== -->
   <script src="js/sw-register.js"></script>
   <script src="js/app.js"></script>
