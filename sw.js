@@ -9,7 +9,7 @@ const CACHE_NAME = 'mi-garaje-v2';
 // Archivos a precachear durante la instalación
 const ARCHIVOS_PRECACHE = [
   '/',
-  '/index.html',
+  '/Proyecto Mi Garaje/index.html',
   '/css/style.css',
   '/js/app.js',
   '/js/sw-register.js',
