@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mi Catálogo Cuba | Productos por WhatsApp</title>
+  
+  <!-- Meta tags para SEO y redes sociales -->
+  <meta name="description" content="Catálogo de productos en Cuba. Venta por WhatsApp. Zapatos, sandalias, mochilas y más. Envíos a toda la isla.">
+  <meta name="keywords" content="catálogo Cuba, venta WhatsApp, productos Cuba, zapatos, sandalias, mochilas">
+  <meta name="author" content="Tu Nombre">
+  
+  <!-- Open Graph para compartir en WhatsApp/Facebook/Telegram -->
+  <meta property="og:title" content="Mi Catálogo Cuba | Productos por WhatsApp">
+  <meta property="og:description" content="Catálogo de productos en Cuba. Consulta precios y disponibilidad por WhatsApp.">
+  <meta property="og:image" content="https://tusuario.github.io/mi-catalogo/images/logo-preview.jpg">
+  <meta property="og:url" content="https://tusuario.github.io/mi-catalogo/">
+  <meta property="og:type" content="website">
+  
+  <!-- Tema de color para la barra de direcciones (Android) -->
+  <meta name="theme-color" content="#075E54">
+  
+  <!-- Para que la PWA sea instalable -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Iconos para diferentes dispositivos -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Cabecera fija -->
+  <header>
+    <h1>📦 Mi Catálogo Cuba</h1>
+    <p>Productos de calidad | Envíos a toda la isla</p>
+  </header>
+  
+  <!-- Barra de herramientas -->
+  <div class="toolbar">
+    <!-- Modo solo texto / imágenes -->
+    <button id="toggleModeBtn" class="mode-btn">📄 Modo solo texto</button>
+    
+    <!-- Botón para ver solo favoritos -->
+    <button id="showFavsBtn" class="fav-filter-btn">⭐ Mis favoritos</button>
+  </div>
+  
+  <!-- Indicador de estado de conexión y sincronización -->
+  <div id="statusBar" class="status-bar online">
+    ✅ Conectado · Última actualización: <span id="lastUpdate">--/--/----</span>
+  </div>
+  
+  <!-- Contenedor de la lista de productos -->
+  <div id="productosContainer" class="productos-grid">
+    <!-- Aquí se cargarán dinámicamente los productos desde JavaScript -->
+    <div class="loading">Cargando catálogo...</div>
+  </div>
+  
+  <!-- Modal (ventana emergente) para ver detalles del producto -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div id="modalBody">
+        <!-- Aquí se carga el contenido del producto seleccionado -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mensaje para usuarios sin conexión (visible solo si es necesario) -->
+  <div id="offlineMsg" class="offline-msg" style="display: none;">
+    ⚠️ Estás offline. Los productos que ves son los últimos guardados.
+  </div>
+  
+  <!-- Archivos JavaScript -->
+  <!-- sw-register.js registra el Service Worker para funcionalidad offline -->
+  <script src="js/sw-register.js"></script>
+  <!-- app.js contiene toda la lógica de la aplicación -->
+  <script src="js/app.js"></script>
+</body>
+</html>
