@@ -1,23 +1,22 @@
 // ==================================================
-// sw.js - SERVICE WORKER PARA MI GARAJE
-// Estrategia: cache-first para todos los recursos
-// Permite navegación completa sin internet
+// sw.js - SERVICE WORKER
+// CORREGIDO: Rutas relativas con './' para el precaché
 // ==================================================
 
 const CACHE_NAME = 'mi-garaje-v1';
 
-// Archivos a precachear durante la instalación
+// CORREGIDO: Archivos a precachear con rutas relativas
 const ARCHIVOS_PRECACHE = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/sw-register.js',
-  '/manifest.json',
-  '/data/productos.json'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/sw-register.js',
+  './manifest.json',
+  './data/productos.json'
 ];
 
-// Instalación: guardar archivos críticos en caché
+// INSTALACIÓN
 self.addEventListener('install', event => {
   console.log('🛠️ Service Worker instalando...');
   event.waitUntil(
@@ -26,11 +25,11 @@ self.addEventListener('install', event => {
         console.log('📦 Archivos precacheados');
         return cache.addAll(ARCHIVOS_PRECACHE);
       })
-      .then(() => self.skipWaiting()) // Activar SW inmediatamente
+      .then(() => self.skipWaiting())
   );
 });
 
-// Activación: limpiar cachés viejas y tomar control
+// ACTIVACIÓN
 self.addEventListener('activate', event => {
   console.log('⚡ Service Worker activado');
   event.waitUntil(
@@ -43,81 +42,54 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // Tomar control de páginas abiertas
+    }).then(() => self.clients.claim())
   );
 });
 
-// Interceptar peticiones: estrategia cache-first
+// FETCH (Sin cambios mayores, pero las URLs se manejan solas)
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // Estrategia para imágenes: cache-first, actualizar en segundo plano
   if (url.pathname.includes('/images/')) {
     event.respondWith(
       caches.match(event.request).then(respuestaCache => {
-        // Si está en caché, devolverla (rápido)
         if (respuestaCache) {
-          // Actualizar en segundo plano sin esperar
           fetch(event.request).then(respuestaRed => {
             if (respuestaRed && respuestaRed.status === 200) {
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, respuestaRed);
-              });
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed));
             }
           }).catch(() => {});
           return respuestaCache;
         }
-        
-        // Si no está en caché, ir a la red
         return fetch(event.request).then(respuestaRed => {
           const copia = respuestaRed.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copia);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copia));
           return respuestaRed;
-        }).catch(() => {
-          // Fallback: imagen por defecto
-          return caches.match('/icons/icon-192.png');
-        });
+        }).catch(() => caches.match('/icons/icon-192.png'));
       })
     );
   }
-  // Estrategia para JSON (productos): cache-first con revalidación
   else if (url.pathname.includes('/data/')) {
     event.respondWith(
       caches.match(event.request).then(respuestaCache => {
         const respuestaRed = fetch(event.request).then(respuestaRed => {
-          const copia = respuestaRed.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copia);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed.clone()));
           return respuestaRed;
-        }).catch(() => {
-          // Si no hay red, devolver caché (aunque sea vieja)
-          return respuestaCache;
-        });
-        
+        }).catch(() => respuestaCache);
         return respuestaCache || respuestaRed;
       })
     );
   }
-  // Estrategia para HTML, CSS, JS: cache-first
   else {
     event.respondWith(
       caches.match(event.request).then(respuestaCache => {
         return respuestaCache || fetch(event.request).then(respuestaRed => {
-          const copia = respuestaRed.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copia);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed.clone()));
           return respuestaRed;
         });
       }).catch(() => {
-        // Si todo falla y es navegación, mostrar index.html
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-        return new Response('Offline - No se pudo cargar el recurso', { status: 503 });
+        if (event.request.mode === 'navigate') return caches.match('./index.html');
+        return new Response('Offline', { status: 503 });
       })
     );
   }
