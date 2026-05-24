@@ -3,39 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Mi Garaje | Productos únicos en Matanzas</title>
+  <title>Mi Garaje | Hallazgos únicos en Cuba</title>
   
-  <!-- ==============================================
-       META TAGS PARA SEO Y REDES SOCIALES
-  ================================================== -->
-  <meta name="description" content="Mi Garaje - Venta de articulos únicos en Matanzas. Ropa de calidad, calzado, Muebles restaurados, electrónica vintage, decoración, ropa, calzado.">
-  <meta name="keywords" content="venta de garaje Cuba, ropas, calzado, muebles vintage, electrónica antigua, decoración Cuba, hallazgos únicos">
+  <!-- METATAGS (sin cambios) -->
+  <meta name="description" content="Mi Garaje - Venta de hallazgos únicos en Cuba. Muebles restaurados, electrónica vintage, decoración. Envíos a toda la isla. Contacta por WhatsApp.">
+  <meta name="keywords" content="venta de garaje Cuba, muebles vintage, electrónica antigua, decoración Cuba, hallazgos únicos">
   <meta name="author" content="Mi Garaje">
-  
-  <!-- Open Graph para compartir en WhatsApp, Facebook, Telegram -->
   <meta property="og:title" content="Mi Garaje | Hallazgos únicos en Cuba">
   <meta property="og:description" content="Productos únicos, restaurados y con historia. Consulta por WhatsApp.">
-  <meta property="og:image" content="https://tusuario.github.io/mi-garaje/images/logo-preview.jpg">
-  <meta property="og:url" content="https://tusuario.github.io/mi-garaje/">
+  <meta property="og:image" content="https://posicionaando-maker.github.io/migaraje/images/logo-preview.jpg">
+  <meta property="og:url" content="https://posicionaando-maker.github.io/migaraje/">
   <meta property="og:type" content="website">
-  
-  <!-- Color de la barra de direcciones en Android -->
   <meta name="theme-color" content="#FF6B35">
   
-  <!-- Para que la PWA sea instalable -->
+  <!-- CORREGIDO: RUTAS RELATIVAS (sin la barra '/' al inicio) -->
   <link rel="manifest" href="manifest.json">
-  
-  <!-- Icono para cuando se añade a la pantalla de inicio -->
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  
-  <!-- CSS principal -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- ==============================================
-       CABECERA CON GRADIENTE LLAMATIVO
-       Solo conserva el botón de actualización
-  ================================================== -->
+  <!-- ========== CABECERA ========== -->
   <header>
     <div class="header-top">
       <div class="logo-area">
@@ -43,26 +30,20 @@
         <span class="tagline">Hallazgos únicos en Cuba</span>
       </div>
       <div class="header-buttons">
-        <!-- Único botón: actualización manual -->
         <button id="updateBtn" class="icon-btn" aria-label="Actualizar catálogo">🔄</button>
       </div>
     </div>
     
-    <!-- ==============================================
-         BUSCADOR CON AUTOCOMPLETAR (estilo Google)
-    ================================================== -->
+    <!-- BUSCADOR -->
     <div class="search-container">
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 Buscar en Mi Garaje..." autocomplete="off">
         <button id="clearSearchBtn" class="clear-search" style="display: none;">✖️</button>
       </div>
-      <!-- Lista desplegable de sugerencias -->
       <div id="suggestionsList" class="suggestions-list" style="display: none;"></div>
     </div>
     
-    <!-- ==============================================
-         FILTROS Y CONTROLES
-    ================================================== -->
+    <!-- FILTROS -->
     <div class="toolbar">
       <div class="filter-buttons">
         <button id="filterAllBtn" class="filter-btn active">Todos</button>
@@ -78,15 +59,11 @@
       </div>
     </div>
     
-    <!-- Contador de resultados -->
     <div id="resultCount" class="result-count"></div>
   </header>
   
-  <!-- ==============================================
-       CONTENEDOR PRINCIPAL
-  ================================================== -->
+  <!-- ========== MAIN ========== -->
   <main>
-    <!-- Barra de progreso de carga -->
     <div id="progressContainer" class="progress-container" style="display: none;">
       <div class="progress-bar">
         <div id="progressFill" class="progress-fill"></div>
@@ -94,12 +71,10 @@
       <div id="progressText" class="progress-text">Cargando catálogo...</div>
     </div>
     
-    <!-- Grid de productos -->
     <div id="productosContainer" class="productos-grid">
       <div class="loading">Cargando catálogo...</div>
     </div>
     
-    <!-- Paginación estilo Amazon -->
     <div id="paginationContainer" class="pagination-container" style="display: none;">
       <button id="prevPage" class="page-btn" disabled>← Anterior</button>
       <div id="pageNumbers" class="page-numbers"></div>
@@ -107,24 +82,19 @@
     </div>
   </main>
   
-  <!-- ==============================================
-       MODAL ADMIN (doble clic en título)
-       Panel del vendedor con estadísticas
-  ================================================== -->
+  <!-- MODAL ADMIN -->
   <div id="adminModal" class="modal admin-modal">
     <div class="modal-content admin-content">
       <div class="admin-header">
         <h2>📊 Mi Garaje - Panel del Vendedor</h2>
         <span class="close-admin-modal">&times;</span>
       </div>
-      <div id="adminStats">
-        <!-- Estadísticas se cargan dinámicamente -->
-      </div>
+      <div id="adminStats"></div>
       <button id="copyStatsBtn" class="copy-stats-btn">📋 Copiar al portapapeles</button>
     </div>
   </div>
   
-  <!-- Mensaje de actualización disponible -->
+  <!-- NOTIFICACIONES -->
   <div id="updateNotification" class="update-notification" style="display: none;">
     <span>🔄 ¡Hay productos nuevos! ¿Actualizar catálogo?</span>
     <div>
@@ -133,14 +103,11 @@
     </div>
   </div>
   
-  <!-- Mensaje offline -->
   <div id="offlineMsg" class="offline-msg" style="display: none;">
     ⚠️ Sin conexión · Mostrando productos guardados en tu dispositivo
   </div>
   
-  <!-- ==============================================
-       SCRIPTS
-  ================================================== -->
+  <!-- CORREGIDO: SCRIPTS CON RUTAS RELATIVAS -->
   <script src="js/sw-register.js"></script>
   <script src="js/app.js"></script>
 </body>
