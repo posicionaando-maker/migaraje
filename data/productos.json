@@ -5,7 +5,7 @@
     {
       "id": "mesa-pino-001",
       "nombre": "Mesa de pino restaurada",
-      "descripcion": "Mesa de pino macizo, año 1960, patas originales restauradas. Medidas: 120x70 cm. Ideal para comedor pequeño. Pequeñas marcas que le dan carácter vintage.",
+      "descripcion": "Mesa de pino macizo, año 1960, patas originales restauradas. Medidas: 120x70 cm. Ideal para comedor pequeño.",
       "precio": 8500,
       "moneda": "CUP",
       "imagen": "images/mesa-pino-001.webp",
@@ -15,7 +15,7 @@
     {
       "id": "lampara-art-deco-002",
       "nombre": "Lámpara Art Decó",
-      "descripcion": "Lámpara de mesa estilo Art Decó, años 40. Pantalla de vidrio esmerilado, base de bronce restaurada. Funciona perfectamente. Altura 45 cm.",
+      "descripcion": "Lámpara de mesa estilo Art Decó, años 40. Pantalla de vidrio esmerilado, base de bronce restaurada.",
       "precio": 3200,
       "moneda": "CUP",
       "imagen": "images/lampara-art-deco-002.webp",
@@ -25,7 +25,7 @@
     {
       "id": "sillon-chester-003",
       "nombre": "Sillón Chesterfield",
-      "descripcion": "Sillón estilo Chesterfield, tapizado en terciopelo burdeos. Madera maciza, patas torneadas. Muy cómodo. Medidas: 80x90x100 cm. Ideal para sala o biblioteca.",
+      "descripcion": "Sillón estilo Chesterfield, tapizado en terciopelo burdeos. Madera maciza.",
       "precio": 18500,
       "moneda": "CUP",
       "imagen": "images/sillon-chester-003.webp",
@@ -35,7 +35,7 @@
     {
       "id": "radio-vintage-004",
       "nombre": "Radio vintage años 50",
-      "descripcion": "Radio de mesa marca Philips, años 50. Gabinete de madera restaurado. Funciona AM/FM. Conserva su diseño original. Ideal para coleccionistas o decoración retro.",
+      "descripcion": "Radio de mesa marca Philips, años 50. Gabinete de madera restaurado. Funciona AM/FM.",
       "precio": 4200,
       "moneda": "CUP",
       "imagen": "images/radio-vintage-004.webp",
@@ -45,7 +45,7 @@
     {
       "id": "cuadro-paisaje-005",
       "nombre": "Cuadro paisaje cubano",
-      "descripcion": "Pintura al óleo, autor local desconocido. Representa paisaje del Valle de Viñales. Marco de madera tallada. Medidas: 60x80 cm. Año aproximado 1980.",
+      "descripcion": "Pintura al óleo, autor local desconocido. Representa paisaje del Valle de Viñales.",
       "precio": 2800,
       "moneda": "CUP",
       "imagen": "images/cuadro-paisaje-005.webp",
@@ -55,13 +55,22 @@
     {
       "id": "maquina-escribir-006",
       "nombre": "Máquina de escribir Olivetti",
-      "descripcion": "Máquina de escribir mecánica Olivetti Lettera 32, años 60. Totalmente funcional, restaurada. Incluye su estuche original. Ideal para decoración o colección.",
+      "descripcion": "Máquina de escribir mecánica Olivetti Lettera 32, años 60. Totalmente funcional.",
       "precio": 9500,
       "moneda": "CUP",
       "imagen": "images/maquina-escribir-006.webp",
       "categoria": "Coleccionables",
       "fecha": "2026-05-15"
+    },
+    {
+      "id": "sillon-mecedor-007",
+      "nombre": "Sillón mecedor antiguo",
+      "descripcion": "Sillón mecedor de madera tallada, años 50. Asiento restaurado en ratán. Muy cómodo y estable.",
+      "precio": 12500,
+      "moneda": "CUP",
+      "imagen": "images/sillon-mecedor-007.webp",
+      "categoria": "Muebles",
+      "fecha": "2026-05-23"
     }
-     ]
   ]
 }
