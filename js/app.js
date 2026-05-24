@@ -1,5 +1,5 @@
 // ==================================================
-// app.js - MI GARAJE
+// app.js - MI GARAJE (SIN PANEL DE REDES SOCIALES)
 // Lógica completa: carga JSON, búsqueda con autocompletar,
 // expansión de tarjetas, paginación estilo Amazon,
 // filtros por categoría, ordenamiento, panel admin con caché
@@ -30,8 +30,6 @@ const sortSelect = document.getElementById('sortSelect');
 const filterAllBtn = document.getElementById('filterAllBtn');
 const categoriasContainer = document.getElementById('categoriasContainer');
 const updateBtn = document.getElementById('updateBtn');
-const socialBtn = document.getElementById('socialBtn');
-const socialPanel = document.getElementById('socialPanel');
 const updateNotification = document.getElementById('updateNotification');
 const confirmUpdateBtn = document.getElementById('confirmUpdate');
 const cancelUpdateBtn = document.getElementById('cancelUpdate');
@@ -43,11 +41,6 @@ const copyStatsBtn = document.getElementById('copyStatsBtn');
 const progressContainer = document.getElementById('progressContainer');
 const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
-const shareProductBtn = document.getElementById('shareProductBtn');
-
-// Variables para enlaces de redes sociales
-let facebookUrl = '#';
-let instagramUrl = '#';
 
 // ---------- FUNCIONES DE CARGA Y PROGRESO ----------
 
@@ -84,7 +77,6 @@ async function cargarCatalogo(mostrarProgresoFlag = true) {
             updateNotification.style.display = 'flex';
             setTimeout(() => {
                 if (updateNotification.style.display === 'flex') {
-                    // Auto-ocultar después de 10 segundos
                     setTimeout(() => {
                         updateNotification.style.display = 'none';
                     }, 10000);
@@ -94,14 +86,6 @@ async function cargarCatalogo(mostrarProgresoFlag = true) {
         
         catalogoData = nuevoData;
         versionActual = nuevoData.version;
-        
-        // Guardar enlaces de redes sociales
-        if (catalogoData.redesSociales) {
-            facebookUrl = catalogoData.redesSociales.facebook;
-            instagramUrl = catalogoData.redesSociales.instagram;
-            document.getElementById('facebookLink').href = facebookUrl;
-            document.getElementById('instagramLink').href = instagramUrl;
-        }
         
         // Extraer categorías únicas
         extraerCategorias();
@@ -443,26 +427,6 @@ function compartirProducto(productoId) {
         alert('Enlace copiado al portapapeles. Puedes pegarlo en WhatsApp o Telegram.');
     }
 }
-
-// Evento del botón "Compartir producto" del panel social
-shareProductBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (productosFiltrados.length > 0) {
-        compartirProducto(productosFiltrados[0].id);
-    } else {
-        alert('No hay productos para compartir.');
-    }
-});
-
-// ---------- REDES SOCIALES (panel desplegable) ----------
-
-socialBtn.addEventListener('click', () => {
-    if (socialPanel.style.display === 'none') {
-        socialPanel.style.display = 'flex';
-    } else {
-        socialPanel.style.display = 'none';
-    }
-});
 
 // ---------- PAGINACIÓN ESTILO AMAZON ----------
 
