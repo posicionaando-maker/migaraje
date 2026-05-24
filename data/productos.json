@@ -61,6 +61,17 @@
       "imagen": "images/maquina-escribir-006.webp",
       "categoria": "Coleccionables",
       "fecha": "2026-05-15"
+    },
+     {
+      "id": "maquina-escribir-006",
+      "nombre": "Máquina de escribir Pascuala",
+      "descripcion": "Máquina de escribir mecánica Olivetti Lettera 32, años 60. Totalmente funcional, restaurada. Incluye su estuche original. Ideal para decoración o colección.",
+      "precio": 9500,
+      "moneda": "CUP",
+      "imagen": "images/maquina-escribir-006.webp",
+      "categoria": "Coleccionables1",
+      "fecha": "2026-05-15"
     }
+  ]
   ]
 }
