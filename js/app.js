@@ -126,6 +126,11 @@ function mostrarProgreso(mostrar) {
 }
 
 // Cargar catálogo desde GitHub
+// ==================================================
+// FUNCIÓN CORREGIDA: cargarCatalogo()
+// Con más logs y manejo de errores
+// ==================================================
+
 async function cargarCatalogo(mostrarProgresoFlag = true) {
     if (mostrarProgresoFlag) {
         mostrarProgreso(true);
@@ -133,15 +138,37 @@ async function cargarCatalogo(mostrarProgresoFlag = true) {
     }
     
     try {
-        const response = await fetch(`data/productos.json?t=${Date.now()}`);
-        if (!response.ok) throw new Error('Error HTTP');
+        // --- OPCIÓN 1: Ruta relativa (la que ya tienes) ---
+        // let url = `data/productos.json?t=${Date.now()}`;
+        
+        // --- OPCIÓN 2: Ruta absoluta pero dentro de tu proyecto (CORREGIDA) ---
+        let url = `/migaraje/data/productos.json?t=${Date.now()}`;
+        
+        console.log('🔄 Intentando cargar desde:', url);  // <--- ¡MUY IMPORTANTE! Mira esto en la consola.
+        
+        const response = await fetch(url);
+        
+        console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+        }
         
         if (mostrarProgresoFlag) actualizarProgreso(40, 'Descargando datos...');
         
         const nuevoData = await response.json();
         
-        if (mostrarProgresoFlag) actualizarProgreso(70, 'Procesando productos...');
+        console.log('✅ Datos recibidos correctamente:', nuevoData); // <--- Mira si llega el JSON
         
+        if (mostrarProgresoFlag) actualizarProgreso(70, 'Procesando productos...');
+
+
+
+
+
+
+
+      
         // Verificar si hay nueva versión
         if (versionActual && versionActual !== nuevoData.version && mostrarProgresoFlag) {
             updateNotification.style.display = 'flex';
