@@ -1,90 +1,18 @@
 // ==================================================
-// app.js - MI GARAJE (SIN PANEL DE REDES SOCIALES)
-// Lógica completa: carga JSON, búsqueda con autocompletar,
-// expansión de tarjetas, paginación estilo Amazon,
-// filtros por categoría, ordenamiento, panel admin con caché
+// app.js - MI GARAJE (VERSIÓN CORREGIDA)
+// Errores de orden de funciones solucionados
 // ==================================================
 
 // ---------- VARIABLES GLOBALES ----------
-let catalogoData = null;           // Datos completos del JSON
-let productosFiltrados = [];       // Productos después de aplicar filtros
+let catalogoData = null;
+let productosFiltrados = [];
 let paginaActual = 1;
 let productosPorPagina = 10;
 let categoriaActiva = 'Todos';
 let ordenActual = 'fecha';
 let busquedaActiva = '';
-let productoExpandidoId = null;     // ID del producto expandido actualmente
+let productoExpandidoId = null;
 let versionActual = null;
-
-// ========== INSTALACIÓN DE LA PWA (BOTÓN PERSONALIZADO) ==========
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Previene que el navegador muestre el diálogo automático
-  e.preventDefault();
-  // Guarda el evento para usarlo más tarde
-  deferredPrompt = e;
-  // Muestra el botón de instalación
-  mostrarBotonInstalar();
-});
-
-function mostrarBotonInstalar() {
-  // Evita crear el botón varias veces
-  if (document.getElementById('btnInstalar')) return;
-  
-  const btn = document.createElement('button');
-  btn.id = 'btnInstalar';
-  btn.innerHTML = '📲 Instalar Mi Garaje';
-  btn.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    background: linear-gradient(135deg, #FF6B35, #F4A261);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 24px;
-    font-weight: bold;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    cursor: pointer;
-    animation: pulse 1.5s infinite;
-  `;
-  
-  // Estilo de animación para llamar la atención
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes pulse {
-      0% { transform: translateX(-50%) scale(1); opacity: 1; }
-      50% { transform: translateX(-50%) scale(1.05); opacity: 0.9; }
-      100% { transform: translateX(-50%) scale(1); opacity: 1; }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  btn.addEventListener('click', async () => {
-    if (!deferredPrompt) {
-      alert('La instalación no está disponible ahora. Intenta más tarde.');
-      return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(outcome === 'accepted' ? '✅ Usuario aceptó instalar' : '❌ Usuario rechazó');
-    deferredPrompt = null;
-    btn.style.display = 'none';
-  });
-  
-  document.body.appendChild(btn);
-}
-
-// Opcional: Oculta el botón si la app ya está instalada
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('btnInstalar');
-  if (btn) btn.style.display = 'none';
-  console.log('✅ Mi Garaje fue instalada como PWA');
-});
 
 // DOM elements
 const productosContainer = document.getElementById('productosContainer');
@@ -112,112 +40,147 @@ const progressContainer = document.getElementById('progressContainer');
 const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 
-// ---------- FUNCIONES DE CARGA Y PROGRESO ----------
+// ========== INSTALACIÓN DE LA PWA (BOTÓN PERSONALIZADO) ==========
+let deferredPrompt;
 
-// Actualizar barra de progreso
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    mostrarBotonInstalar();
+});
+
+function mostrarBotonInstalar() {
+    if (document.getElementById('btnInstalar')) return;
+    
+    const btn = document.createElement('button');
+    btn.id = 'btnInstalar';
+    btn.innerHTML = '📲 Instalar Mi Garaje';
+    btn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        background: linear-gradient(135deg, #FF6B35, #F4A261);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 24px;
+        font-weight: bold;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        cursor: pointer;
+        animation: pulse 1.5s infinite;
+    `;
+    
+    btn.addEventListener('click', async () => {
+        if (!deferredPrompt) {
+            alert('La instalación no está disponible ahora.');
+            return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(outcome === 'accepted' ? '✅ Instalada' : '❌ Rechazada');
+        deferredPrompt = null;
+        btn.style.display = 'none';
+    });
+    
+    document.body.appendChild(btn);
+}
+
+window.addEventListener('appinstalled', () => {
+    const btn = document.getElementById('btnInstalar');
+    if (btn) btn.style.display = 'none';
+});
+
+// ========== FUNCIONES DE PROGRESO (DEFINIDAS PRIMERO) ==========
 function actualizarProgreso(porcentaje, texto) {
-    progressFill.style.width = `${porcentaje}%`;
-    progressText.textContent = texto;
+    if (progressFill) progressFill.style.width = `${porcentaje}%`;
+    if (progressText) progressText.textContent = texto;
 }
 
-// Mostrar/ocultar progreso
 function mostrarProgreso(mostrar) {
-    progressContainer.style.display = mostrar ? 'block' : 'none';
+    if (progressContainer) progressContainer.style.display = mostrar ? 'block' : 'none';
 }
 
-// Cargar catálogo desde GitHub
-// ==================================================
-// FUNCIÓN CORREGIDA: cargarCatalogo()
-// Con más logs y manejo de errores
-// ==================================================
+// ========== FUNCIONES AUXILIARES ==========
+function actualizarStatusBar() {
+    if (navigator.onLine) {
+        if (offlineMsg) offlineMsg.style.display = 'none';
+    } else {
+        if (offlineMsg) offlineMsg.style.display = 'block';
+    }
+}
 
+// ========== CARGA DEL CATÁLOGO (CORREGIDA) ==========
 async function cargarCatalogo(mostrarProgresoFlag = true) {
+    console.log('🔄 Iniciando carga del catálogo...');
+    
     if (mostrarProgresoFlag) {
         mostrarProgreso(true);
-        actualizarProgreso(10, 'Conectando con el catálogo...');
+        actualizarProgreso(10, 'Conectando...');
     }
     
     try {
-        // --- OPCIÓN 1: Ruta relativa (la que ya tienes) ---
-        // let url = `data/productos.json?t=${Date.now()}`;
+        // Ruta CORRECTA para GitHub Pages
+        const url = `data/productos.json?t=${Date.now()}`;
+        console.log('📡 Cargando desde:', url);
         
-        // --- OPCIÓN 2: Ruta absoluta pero dentro de tu proyecto (CORREGIDA) ---
-        let url = `/migaraje/data/productos.json?t=${Date.now()}`;
-        
-        console.log('🔄 Intentando cargar desde:', url);  // <--- ¡MUY IMPORTANTE! Mira esto en la consola.
-        
+        actualizarProgreso(30, 'Descargando datos...');
         const response = await fetch(url);
         
-        console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+        console.log('📡 Respuesta:', response.status);
         
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        if (mostrarProgresoFlag) actualizarProgreso(40, 'Descargando datos...');
-        
+        actualizarProgreso(60, 'Procesando productos...');
         const nuevoData = await response.json();
         
-        console.log('✅ Datos recibidos correctamente:', nuevoData); // <--- Mira si llega el JSON
+        console.log('✅ Datos recibidos:', nuevoData.productos?.length || 0, 'productos');
         
-        if (mostrarProgresoFlag) actualizarProgreso(70, 'Procesando productos...');
-
-
-
-
-
-
-
-      
-        // Verificar si hay nueva versión
+        // Verificar versión
         if (versionActual && versionActual !== nuevoData.version && mostrarProgresoFlag) {
             updateNotification.style.display = 'flex';
             setTimeout(() => {
-                if (updateNotification.style.display === 'flex') {
-                    setTimeout(() => {
-                        updateNotification.style.display = 'none';
-                    }, 10000);
-                }
-            }, 100);
+                updateNotification.style.display = 'none';
+            }, 10000);
         }
         
         catalogoData = nuevoData;
         versionActual = nuevoData.version;
         
-        // Extraer categorías únicas
         extraerCategorias();
-        
-        // Aplicar filtros y orden
         aplicarFiltrosYOrden();
         
-        if (mostrarProgresoFlag) {
-            actualizarProgreso(100, '¡Listo!');
-            setTimeout(() => {
-                mostrarProgreso(false);
-            }, 500);
-        }
-        
+        actualizarProgreso(100, '¡Listo!');
+        setTimeout(() => mostrarProgreso(false), 500);
         actualizarStatusBar();
         
     } catch (error) {
-        console.warn('Error cargando catálogo:', error);
+        console.error('❌ ERROR al cargar catálogo:', error);
         if (mostrarProgresoFlag) {
-            actualizarProgreso(0, 'Error al cargar. Usando caché local.');
-            setTimeout(() => {
-                mostrarProgreso(false);
-            }, 2000);
+            actualizarProgreso(0, 'Error de carga');
+            setTimeout(() => mostrarProgreso(false), 2000);
         }
         
         if (!catalogoData) {
-            productosContainer.innerHTML = '<div class="loading">No se pudo cargar el catálogo. Verifica tu conexión a internet.</div>';
+            productosContainer.innerHTML = `
+                <div class="loading" style="color: #E63946;">
+                    ❌ No se pudo cargar el catálogo.<br>
+                    <small>${error.message}</small><br><br>
+                    🔄 <a href="#" onclick="location.reload()">Intentar de nuevo</a>
+                </div>
+            `;
         }
         actualizarStatusBar();
     }
 }
 
-// Extraer categorías únicas del JSON
+// ========== CATEGORÍAS ==========
 function extraerCategorias() {
-    if (!catalogoData) return;
+    if (!catalogoData || !categoriasContainer) return;
     
     const categoriasSet = new Set();
     catalogoData.productos.forEach(p => {
@@ -225,11 +188,8 @@ function extraerCategorias() {
     });
     
     const categorias = Array.from(categoriasSet).sort();
-    
-    // Limpiar contenedor
     categoriasContainer.innerHTML = '';
     
-    // Agregar botones de categoría
     categorias.forEach(cat => {
         const btn = document.createElement('button');
         btn.className = 'filter-btn';
@@ -239,77 +199,27 @@ function extraerCategorias() {
     });
 }
 
-// Filtrar por categoría
 function filtrarPorCategoria(categoria) {
     categoriaActiva = categoria;
-    
-    // Actualizar estilos de botones
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     filterAllBtn.classList.remove('active');
-    
-    const btnActivo = Array.from(categoriasContainer.children).find(
-        btn => btn.textContent === categoria
-    );
+    const btnActivo = Array.from(categoriasContainer.children).find(btn => btn.textContent === categoria);
     if (btnActivo) btnActivo.classList.add('active');
-    
     aplicarFiltrosYOrden();
 }
 
-// Filtrar todos (sin categoría)
 function filtrarTodos() {
     categoriaActiva = 'Todos';
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     filterAllBtn.classList.add('active');
     aplicarFiltrosYOrden();
 }
 
-filterAllBtn.addEventListener('click', filtrarTodos);
+if (filterAllBtn) filterAllBtn.addEventListener('click', filtrarTodos);
 
-// Aplicar filtros (búsqueda + categoría) y orden
-function aplicarFiltrosYOrden() {
-    if (!catalogoData) return;
-    
-    let productos = [...catalogoData.productos];
-    
-    // Filtrar por búsqueda
-    if (busquedaActiva.trim()) {
-        const termino = busquedaActiva.toLowerCase().trim();
-        productos = productos.filter(p => 
-            p.nombre.toLowerCase().includes(termino) || 
-            p.descripcion.toLowerCase().includes(termino)
-        );
-    }
-    
-    // Filtrar por categoría
-    if (categoriaActiva !== 'Todos') {
-        productos = productos.filter(p => p.categoria === categoriaActiva);
-    }
-    
-    // Ordenar
-    productos = ordenarProductos(productos);
-    
-    productosFiltrados = productos;
-    
-    // Actualizar contador
-    resultCount.textContent = `${productosFiltrados.length} producto${productosFiltrados.length !== 1 ? 's' : ''}`;
-    
-    // Resetear página a 1
-    paginaActual = 1;
-    productoExpandidoId = null;
-    
-    // Renderizar
-    renderizarProductos();
-    renderizarPaginacion();
-}
-
-// Ordenar productos según selección
+// ========== FILTROS Y ORDEN ==========
 function ordenarProductos(productos) {
     const productosCopy = [...productos];
-    
     switch(ordenActual) {
         case 'fecha':
             return productosCopy.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -324,15 +234,41 @@ function ordenarProductos(productos) {
     }
 }
 
-// Cambiar orden
-sortSelect.addEventListener('change', (e) => {
-    ordenActual = e.target.value;
-    aplicarFiltrosYOrden();
-});
+function aplicarFiltrosYOrden() {
+    if (!catalogoData) return;
+    
+    let productos = [...catalogoData.productos];
+    
+    if (busquedaActiva.trim()) {
+        const termino = busquedaActiva.toLowerCase().trim();
+        productos = productos.filter(p => 
+            p.nombre.toLowerCase().includes(termino) || 
+            p.descripcion.toLowerCase().includes(termino)
+        );
+    }
+    
+    if (categoriaActiva !== 'Todos') {
+        productos = productos.filter(p => p.categoria === categoriaActiva);
+    }
+    
+    productosFiltrados = ordenarProductos(productos);
+    if (resultCount) resultCount.textContent = `${productosFiltrados.length} producto${productosFiltrados.length !== 1 ? 's' : ''}`;
+    
+    paginaActual = 1;
+    productoExpandidoId = null;
+    
+    renderizarProductos();
+    renderizarPaginacion();
+}
 
-// ---------- BÚSQUEDA CON AUTOCOMPLETAR ----------
+if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+        ordenActual = e.target.value;
+        aplicarFiltrosYOrden();
+    });
+}
 
-// Generar sugerencias
+// ========== BÚSQUEDA ==========
 function generarSugerencias(texto) {
     if (!texto.trim() || !catalogoData) {
         suggestionsList.style.display = 'none';
@@ -340,30 +276,24 @@ function generarSugerencias(texto) {
     }
     
     const termino = texto.toLowerCase().trim();
-    const productos = catalogoData.productos;
-    
-    // Buscar coincidencias (nombre o categoría)
-    const sugerencias = productos.filter(p => 
+    const sugerencias = catalogoData.productos.filter(p => 
         p.nombre.toLowerCase().includes(termino) ||
         p.categoria.toLowerCase().includes(termino)
-    ).slice(0, 8); // Máximo 8 sugerencias
+    ).slice(0, 8);
     
     if (sugerencias.length === 0) {
         suggestionsList.style.display = 'none';
         return;
     }
     
-    // Renderizar sugerencias
     suggestionsList.innerHTML = sugerencias.map(p => `
         <div class="suggestion-item" data-id="${p.id}">
             <span class="suggestion-nombre">${p.nombre}</span>
             <span class="suggestion-categoria">${p.categoria}</span>
         </div>
     `).join('');
-    
     suggestionsList.style.display = 'block';
     
-    // Agregar eventos a las sugerencias
     document.querySelectorAll('.suggestion-item').forEach(item => {
         item.addEventListener('click', () => {
             const id = item.getAttribute('data-id');
@@ -378,45 +308,33 @@ function generarSugerencias(texto) {
     });
 }
 
-// Eventos del buscador
-searchInput.addEventListener('input', (e) => {
-    busquedaActiva = e.target.value;
-    clearSearchBtn.style.display = busquedaActiva ? 'block' : 'none';
-    generarSugerencias(busquedaActiva);
-    aplicarFiltrosYOrden();
-});
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        busquedaActiva = e.target.value;
+        if (clearSearchBtn) clearSearchBtn.style.display = busquedaActiva ? 'block' : 'none';
+        generarSugerencias(busquedaActiva);
+        aplicarFiltrosYOrden();
+    });
+}
 
-clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    busquedaActiva = '';
-    clearSearchBtn.style.display = 'none';
-    suggestionsList.style.display = 'none';
-    aplicarFiltrosYOrden();
-    searchInput.focus();
-});
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        busquedaActiva = '';
+        clearSearchBtn.style.display = 'none';
+        suggestionsList.style.display = 'none';
+        aplicarFiltrosYOrden();
+        searchInput.focus();
+    });
+}
 
-// Cerrar sugerencias al hacer clic fuera
 document.addEventListener('click', (e) => {
-    if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+    if (searchInput && !searchInput.contains(e.target) && suggestionsList && !suggestionsList.contains(e.target)) {
         suggestionsList.style.display = 'none';
     }
 });
 
-// ---------- EXPANSIÓN DE TARJETAS ----------
-
-function toggleExpandir(productoId) {
-    if (productoExpandidoId === productoId) {
-        // Colapsar
-        productoExpandidoId = null;
-    } else {
-        // Expandir nueva
-        productoExpandidoId = productoId;
-    }
-    renderizarProductos(); // Re-renderizar para actualizar estado
-}
-
-// ---------- RENDERIZADO DE PRODUCTOS ----------
-
+// ========== RENDERIZADO ==========
 function renderizarProductos() {
     if (!productosFiltrados || productosFiltrados.length === 0) {
         productosContainer.innerHTML = '<div class="loading">No se encontraron productos. Pronto añadiremos más hallazgos.</div>';
@@ -427,148 +345,112 @@ function renderizarProductos() {
     const fin = inicio + productosPorPagina;
     const productosPagina = productosFiltrados.slice(inicio, fin);
     
-    productosContainer.innerHTML = productosPagina.map(p => renderizarProducto(p)).join('');
+    productosContainer.innerHTML = productosPagina.map(p => {
+        const esExpandido = productoExpandidoId === p.id;
+        const claseExpandida = esExpandido ? 'expandida' : '';
+        const descripcionCorta = p.descripcion.substring(0, 100) + (p.descripcion.length > 100 ? '...' : '');
+        
+        return `
+            <div class="producto-card ${claseExpandida}" data-id="${p.id}">
+                <img class="producto-imagen" src="${p.imagen}" alt="${p.nombre}" loading="lazy" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23ddd%22/%3E%3Ctext x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3ESin imagen%3C/text%3E%3C/svg%3E'">
+                <div class="producto-info">
+                    <div class="producto-nombre">${p.nombre}</div>
+                    <div class="producto-precio">${p.precio} ${p.moneda || 'CUP'}</div>
+                    <span class="producto-categoria">${p.categoria || 'General'}</span>
+                    <div class="producto-descripcion">${esExpandido ? p.descripcion : descripcionCorta}</div>
+                    <div class="card-buttons">
+                        <button class="ver-mas-btn">${esExpandido ? 'Ver menos' : 'Ver más'}</button>
+                        <a href="#" class="whatsapp-btn">💬 WhatsApp</a>
+                        <a href="#" class="compartir-btn">📤 Compartir</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
     
-    // Asignar eventos
-    document.querySelectorAll('.producto-card').forEach(card => {
-        const id = card.getAttribute('data-id');
-        // Evento para expandir/colapsar al hacer clic en "Ver más"
-        const verMasBtn = card.querySelector('.ver-mas-btn');
-        if (verMasBtn) {
-            verMasBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleExpandir(id);
-            });
-        }
-        
-        // Evento WhatsApp
-        const whatsappBtn = card.querySelector('.whatsapp-btn');
-        if (whatsappBtn) {
-            whatsappBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                abrirWhatsApp(id);
-            });
-        }
-        
-        // Evento Compartir
-        const compartirBtn = card.querySelector('.compartir-btn');
-        if (compartirBtn) {
-            compartirBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                compartirProducto(id);
-            });
-        }
+    // Eventos
+    document.querySelectorAll('.ver-mas-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = btn.closest('.producto-card');
+            const id = card.getAttribute('data-id');
+            if (productoExpandidoId === id) {
+                productoExpandidoId = null;
+            } else {
+                productoExpandidoId = id;
+            }
+            renderizarProductos();
+        });
+    });
+    
+    document.querySelectorAll('.whatsapp-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = btn.closest('.producto-card');
+            const id = card.getAttribute('data-id');
+            const producto = catalogoData.productos.find(p => p.id === id);
+            if (producto) {
+                const numero = catalogoData.whatsappNumber;
+                const mensaje = `Hola, me interesa el producto: ${producto.nombre} (${producto.precio} ${producto.moneda || 'CUP'}). ¿Está disponible?`;
+                window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
+            }
+        });
+    });
+    
+    document.querySelectorAll('.compartir-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = btn.closest('.producto-card');
+            const id = card.getAttribute('data-id');
+            const producto = catalogoData.productos.find(p => p.id === id);
+            if (producto) {
+                const texto = `¡Mira este producto en Mi Garaje! ${producto.nombre} - ${producto.precio} ${producto.moneda || 'CUP'}`;
+                if (navigator.share) {
+                    navigator.share({ title: producto.nombre, text: texto, url: window.location.href });
+                } else {
+                    navigator.clipboard.writeText(`${texto}\n${window.location.href}`);
+                    alert('Enlace copiado al portapapeles');
+                }
+            }
+        });
     });
 }
 
-function renderizarProducto(producto) {
-    const esExpandido = productoExpandidoId === producto.id;
-    const claseExpandida = esExpandido ? 'expandida' : '';
-    
-    // Truncar descripción si no está expandida
-    const descripcionMostrada = esExpandido ? producto.descripcion : producto.descripcion.substring(0, 100);
-    const descripcionFinal = esExpandido ? descripcionMostrada : descripcionMostrada + (producto.descripcion.length > 100 ? '...' : '');
-    
-    return `
-        <div class="producto-card ${claseExpandida}" data-id="${producto.id}">
-            <img class="producto-imagen" src="${producto.imagen}" alt="${producto.nombre}" loading="lazy" 
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23ddd%22/%3E%3Ctext x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3ESin imagen%3C/text%3E%3C/svg%3E'">
-            <div class="producto-info">
-                <div class="producto-nombre">${producto.nombre}</div>
-                <div class="producto-precio">${producto.precio} ${producto.moneda || 'CUP'}</div>
-                <span class="producto-categoria">${producto.categoria || 'General'}</span>
-                <div class="producto-descripcion">${descripcionFinal}</div>
-                <div class="card-buttons">
-                    <button class="ver-mas-btn">${esExpandido ? 'Ver menos' : 'Ver más'}</button>
-                    <a href="#" class="whatsapp-btn">💬 WhatsApp</a>
-                    <a href="#" class="compartir-btn">📤 Compartir</a>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// ---------- WHATSAPP ----------
-
-function abrirWhatsApp(productoId) {
-    const producto = catalogoData.productos.find(p => p.id === productoId);
-    if (!producto) return;
-    
-    const numero = catalogoData.whatsappNumber;
-    const mensaje = `Hola, me interesa el producto: ${producto.nombre} (${producto.precio} ${producto.moneda || 'CUP'}). ¿Está disponible?`;
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
-}
-
-// ---------- COMPARTIR PRODUCTO ----------
-
-function compartirProducto(productoId) {
-    const producto = catalogoData.productos.find(p => p.id === productoId);
-    if (!producto) return;
-    
-    const texto = `¡Mira este producto en Mi Garaje! ${producto.nombre} - ${producto.precio} ${producto.moneda || 'CUP'}`;
-    const url = window.location.href;
-    
-    // Usar Web Share API si está disponible
-    if (navigator.share) {
-        navigator.share({
-            title: producto.nombre,
-            text: texto,
-            url: url
-        }).catch(err => console.log('Error al compartir:', err));
-    } else {
-        // Fallback: copiar al portapapeles
-        navigator.clipboard.writeText(`${texto}\n${url}`);
-        alert('Enlace copiado al portapapeles. Puedes pegarlo en WhatsApp o Telegram.');
-    }
-}
-
-// ---------- PAGINACIÓN ESTILO AMAZON ----------
-
+// ========== PAGINACIÓN ==========
 function renderizarPaginacion() {
     const totalProductos = productosFiltrados.length;
     const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
     
-    if (totalPaginas <= 1) {
+    if (totalPaginas <= 1 || !paginationContainer) {
         paginationContainer.style.display = 'none';
         return;
     }
     
     paginationContainer.style.display = 'flex';
+    if (prevPageBtn) prevPageBtn.disabled = (paginaActual === 1);
+    if (nextPageBtn) nextPageBtn.disabled = (paginaActual === totalPaginas);
     
-    // Actualizar botones anterior/siguiente
-    prevPageBtn.disabled = (paginaActual === 1);
-    nextPageBtn.disabled = (paginaActual === totalPaginas);
-    
-    // Generar números de página (máximo 5 a la vez)
     let startPage = Math.max(1, paginaActual - 2);
     let endPage = Math.min(totalPaginas, startPage + 4);
-    
-    if (endPage - startPage < 4 && startPage > 1) {
-        startPage = Math.max(1, endPage - 4);
-    }
+    if (endPage - startPage < 4 && startPage > 1) startPage = Math.max(1, endPage - 4);
     
     let pagesHTML = '';
     if (startPage > 1) {
         pagesHTML += `<button class="page-number" data-page="1">1</button>`;
         if (startPage > 2) pagesHTML += `<span class="page-dots">...</span>`;
     }
-    
     for (let i = startPage; i <= endPage; i++) {
-        const activeClass = i === paginaActual ? 'active' : '';
-        pagesHTML += `<button class="page-number ${activeClass}" data-page="${i}">${i}</button>`;
+        pagesHTML += `<button class="page-number ${i === paginaActual ? 'active' : ''}" data-page="${i}">${i}</button>`;
     }
-    
     if (endPage < totalPaginas) {
         if (endPage < totalPaginas - 1) pagesHTML += `<span class="page-dots">...</span>`;
         pagesHTML += `<button class="page-number" data-page="${totalPaginas}">${totalPaginas}</button>`;
     }
-    
     pageNumbersDiv.innerHTML = pagesHTML;
     
-    // Eventos a los números de página
     document.querySelectorAll('.page-number').forEach(btn => {
         btn.addEventListener('click', () => {
             const page = parseInt(btn.getAttribute('data-page'));
@@ -583,48 +465,50 @@ function renderizarPaginacion() {
     });
 }
 
-function cambiarPagina(delta) {
+if (prevPageBtn) prevPageBtn.addEventListener('click', () => {
     const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
-    const nuevaPagina = paginaActual + delta;
-    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
-        paginaActual = nuevaPagina;
-        productoExpandidoId = null;
-        renderizarProductos();
-        renderizarPaginacion();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (paginaActual > 1) paginaActual--;
+    productoExpandidoId = null;
+    renderizarProductos();
+    renderizarPaginacion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+if (nextPageBtn) nextPageBtn.addEventListener('click', () => {
+    const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+    if (paginaActual < totalPaginas) paginaActual++;
+    productoExpandidoId = null;
+    renderizarProductos();
+    renderizarPaginacion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ========== ACTUALIZACIÓN MANUAL ==========
+if (updateBtn) {
+    updateBtn.addEventListener('click', () => cargarCatalogo(true));
 }
 
-prevPageBtn.addEventListener('click', () => cambiarPagina(-1));
-nextPageBtn.addEventListener('click', () => cambiarPagina(1));
+if (confirmUpdateBtn) {
+    confirmUpdateBtn.addEventListener('click', () => {
+        updateNotification.style.display = 'none';
+        cargarCatalogo(true);
+    });
+}
 
-// ---------- ACTUALIZACIÓN MANUAL ----------
+if (cancelUpdateBtn) {
+    cancelUpdateBtn.addEventListener('click', () => {
+        updateNotification.style.display = 'none';
+    });
+}
 
-updateBtn.addEventListener('click', () => {
-    cargarCatalogo(true);
-});
-
-confirmUpdateBtn.addEventListener('click', () => {
-    updateNotification.style.display = 'none';
-    cargarCatalogo(true);
-});
-
-cancelUpdateBtn.addEventListener('click', () => {
-    updateNotification.style.display = 'none';
-});
-
-// ---------- PANEL ADMIN (doble clic en título) ----------
-
+// ========== PANEL ADMIN ==========
 async function calcularTamanioCache() {
     if (!navigator.onLine) return 'No disponible offline';
-    
     try {
         if (!('caches' in window)) return 'No soportado';
         const cache = await caches.open('mi-garaje-v1');
         const keys = await cache.keys();
-        let total = 0;
-        let imagenesCache = 0;
-        
+        let total = 0, imagenesCache = 0;
         for (const request of keys) {
             const response = await cache.match(request);
             if (response) {
@@ -633,161 +517,91 @@ async function calcularTamanioCache() {
                 if (request.url.includes('/images/')) imagenesCache++;
             }
         }
-        
-        const totalKB = (total / 1024).toFixed(0);
-        return { totalKB, imagenesCache, totalProductos: catalogoData?.productos?.length || 0 };
+        return `${(total / 1024).toFixed(0)} KB (${imagenesCache}/${catalogoData?.productos?.length || 0} imágenes)`;
     } catch (error) {
-        console.warn('Error calculando caché:', error);
-        return 'Error al calcular';
+        return 'Error';
     }
 }
 
 async function mostrarPanelAdmin() {
     if (!catalogoData) {
-        alert('Espera a que cargue el catálogo primero.');
+        alert('Espera a que cargue el catálogo.');
         return;
     }
     
     const productos = catalogoData.productos;
-    
-    // Calcular estadísticas
-    const totalProductos = productos.length;
     const precios = productos.map(p => p.precio);
     const precioMax = Math.max(...precios);
     const precioMin = Math.min(...precios);
     const productoMasCaro = productos.find(p => p.precio === precioMax);
     const productoMasBarato = productos.find(p => p.precio === precioMin);
+    const productoReciente = [...productos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
     
-    // Producto más reciente (por fecha)
-    const productosOrdenadosFecha = [...productos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    const productoReciente = productosOrdenadosFecha[0];
-    
-    // Conteo por categoría
     const categoriasCount = {};
     productos.forEach(p => {
         const cat = p.categoria || 'Sin categoría';
         categoriasCount[cat] = (categoriasCount[cat] || 0) + 1;
     });
     
-    // Tamaño de caché
-    const cacheInfo = await calcularTamanioCache();
-    const cacheText = typeof cacheInfo === 'object' 
-        ? `${cacheInfo.totalKB} KB (${cacheInfo.imagenesCache}/${cacheInfo.totalProductos} imágenes)`
-        : cacheInfo;
+    const cacheText = await calcularTamanioCache();
     
-    const statsHTML = `
-        <div class="stats-section">
-            <h3>📊 General</h3>
+    document.getElementById('adminStats').innerHTML = `
+        <div class="stats-section"><h3>📊 General</h3>
             <div class="stats-grid">
-                <div class="stat-item"><span class="stat-label">Total productos:</span><span class="stat-value">${totalProductos}</span></div>
+                <div class="stat-item"><span class="stat-label">Total productos:</span><span class="stat-value">${productos.length}</span></div>
                 <div class="stat-item"><span class="stat-label">Última versión:</span><span class="stat-value">${catalogoData.version || 'N/A'}</span></div>
                 <div class="stat-item"><span class="stat-label">Producto más reciente:</span><span class="stat-value">${productoReciente?.nombre || 'N/A'}</span></div>
-                <div class="stat-item"><span class="stat-label">Fecha más reciente:</span><span class="stat-value">${productoReciente?.fecha || 'N/A'}</span></div>
             </div>
         </div>
-        <div class="stats-section">
-            <h3>💰 Precios</h3>
+        <div class="stats-section"><h3>💰 Precios</h3>
             <div class="stats-grid">
                 <div class="stat-item"><span class="stat-label">Más caro:</span><span class="stat-value">${precioMax} CUP (${productoMasCaro?.nombre})</span></div>
                 <div class="stat-item"><span class="stat-label">Más barato:</span><span class="stat-value">${precioMin} CUP (${productoMasBarato?.nombre})</span></div>
             </div>
         </div>
-        <div class="stats-section">
-            <h3>📂 Por categoría</h3>
-            ${Object.entries(categoriasCount).map(([cat, count]) => `
-                <div class="categoria-stats">
-                    <span>${cat}</span>
-                    <span><strong>${count}</strong> producto${count !== 1 ? 's' : ''}</span>
-                </div>
-            `).join('')}
+        <div class="stats-section"><h3>📂 Por categoría</h3>
+            ${Object.entries(categoriasCount).map(([cat, count]) => `<div class="categoria-stats"><span>${cat}</span><span><strong>${count}</strong></span></div>`).join('')}
         </div>
-        <div class="stats-section">
-            <h3>💾 Caché local</h3>
+        <div class="stats-section"><h3>💾 Caché local</h3>
             <div class="stats-grid">
                 <div class="stat-item"><span class="stat-label">Tamaño:</span><span class="stat-value">${cacheText}</span></div>
                 <div class="stat-item"><span class="stat-label">WhatsApp:</span><span class="stat-value">${catalogoData.whatsappNumber}</span></div>
             </div>
         </div>
     `;
-    
-    document.getElementById('adminStats').innerHTML = statsHTML;
     adminModal.style.display = 'block';
 }
 
-// Copiar estadísticas al portapapeles
-copyStatsBtn.addEventListener('click', async () => {
-    if (!catalogoData) return;
-    
-    const productos = catalogoData.productos;
-    const precios = productos.map(p => p.precio);
-    const precioMax = Math.max(...precios);
-    const precioMin = Math.min(...precios);
-    const productoMasCaro = productos.find(p => p.precio === precioMax);
-    const productoMasBarato = productos.find(p => p.precio === precioMin);
-    
-    const categoriasCount = {};
-    productos.forEach(p => {
-        const cat = p.categoria || 'Sin categoría';
-        categoriasCount[cat] = (categoriasCount[cat] || 0) + 1;
+if (copyStatsBtn) {
+    copyStatsBtn.addEventListener('click', async () => {
+        if (!catalogoData) return;
+        const productos = catalogoData.productos;
+        const cacheText = await calcularTamanioCache();
+        let texto = `MI GARAJE - PANEL DEL VENDEDOR\nTotal: ${productos.length} productos\nVersión: ${catalogoData.version}\nWhatsApp: ${catalogoData.whatsappNumber}\nCaché: ${cacheText}`;
+        navigator.clipboard.writeText(texto);
+        alert('Estadísticas copiadas');
     });
-    
-    const cacheInfo = await calcularTamanioCache();
-    const cacheText = typeof cacheInfo === 'object' 
-        ? `${cacheInfo.totalKB} KB (${cacheInfo.imagenesCache}/${cacheInfo.totalProductos} imágenes)`
-        : cacheInfo;
-    
-    let texto = `MI GARAJE - PANEL DEL VENDEDOR\n`;
-    texto += `========================\n`;
-    texto += `Total productos: ${productos.length}\n`;
-    texto += `Última versión: ${catalogoData.version}\n`;
-    texto += `Producto más reciente: ${productos.sort((a,b) => new Date(b.fecha) - new Date(a.fecha))[0]?.nombre}\n\n`;
-    texto += `Precio más caro: ${precioMax} CUP (${productoMasCaro?.nombre})\n`;
-    texto += `Precio más barato: ${precioMin} CUP (${productoMasBarato?.nombre})\n\n`;
-    texto += `Por categoría:\n`;
-    for (const [cat, count] of Object.entries(categoriasCount)) {
-        texto += `  ${cat}: ${count}\n`;
-    }
-    texto += `\nCaché local: ${cacheText}\n`;
-    texto += `WhatsApp: ${catalogoData.whatsappNumber}\n`;
-    
-    navigator.clipboard.writeText(texto);
-    alert('Estadísticas copiadas al portapapeles');
-});
-
-// Cerrar modal admin
-closeAdminModal.addEventListener('click', () => {
-    adminModal.style.display = 'none';
-});
-window.addEventListener('click', (e) => {
-    if (e.target === adminModal) {
-        adminModal.style.display = 'none';
-    }
-});
-
-// Detectar doble clic en el título
-mainTitle.addEventListener('dblclick', () => {
-    mostrarPanelAdmin();
-});
-
-// ---------- ESTADO DE CONEXIÓN ----------
-
-function actualizarStatusBar() {
-    if (navigator.onLine) {
-        offlineMsg.style.display = 'none';
-    } else {
-        offlineMsg.style.display = 'block';
-    }
 }
 
+if (closeAdminModal) {
+    closeAdminModal.addEventListener('click', () => adminModal.style.display = 'none');
+}
+window.addEventListener('click', (e) => { if (e.target === adminModal) adminModal.style.display = 'none'; });
+
+if (mainTitle) {
+    mainTitle.addEventListener('dblclick', () => mostrarPanelAdmin());
+}
+
+// ========== CONEXIÓN ==========
 window.addEventListener('online', () => {
     actualizarStatusBar();
     cargarCatalogo(true);
 });
 window.addEventListener('offline', actualizarStatusBar);
 
-// ---------- INICIALIZACIÓN ----------
-
+// ========== INICIALIZACIÓN ==========
 function init() {
+    console.log('🚀 Iniciando Mi Garaje...');
     cargarCatalogo(true);
 }
 
