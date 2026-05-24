@@ -2,6 +2,7 @@
    MI GARAJE - ESTILOS PRINCIPALES
    Colores llamativos para venta de garaje en Cuba
    Gradiente naranja-amarillo en cabecera
+   SIN panel de redes sociales (más compacto)
    ============================================== */
 
 /* Variables globales */
@@ -91,33 +92,6 @@ header {
 .icon-btn:hover {
   background: rgba(255,255,255,0.4);
   transform: scale(1.05);
-}
-
-/* Panel de redes sociales */
-.social-panel {
-  margin-top: 12px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 10px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 40px;
-  backdrop-filter: blur(5px);
-}
-
-.social-link {
-  color: white;
-  text-decoration: none;
-  padding: 5px 12px;
-  border-radius: 20px;
-  background: rgba(0,0,0,0.2);
-  font-size: 0.85rem;
-  transition: background 0.2s;
-}
-
-.social-link:hover {
-  background: rgba(0,0,0,0.4);
 }
 
 /* ========== BUSCADOR ESTILO GOOGLE ========== */
