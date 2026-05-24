@@ -16,6 +16,76 @@ let busquedaActiva = '';
 let productoExpandidoId = null;     // ID del producto expandido actualmente
 let versionActual = null;
 
+// ========== INSTALACIÓN DE LA PWA (BOTÓN PERSONALIZADO) ==========
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Previene que el navegador muestre el diálogo automático
+  e.preventDefault();
+  // Guarda el evento para usarlo más tarde
+  deferredPrompt = e;
+  // Muestra el botón de instalación
+  mostrarBotonInstalar();
+});
+
+function mostrarBotonInstalar() {
+  // Evita crear el botón varias veces
+  if (document.getElementById('btnInstalar')) return;
+  
+  const btn = document.createElement('button');
+  btn.id = 'btnInstalar';
+  btn.innerHTML = '📲 Instalar Mi Garaje';
+  btn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: linear-gradient(135deg, #FF6B35, #F4A261);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+  `;
+  
+  // Estilo de animación para llamar la atención
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes pulse {
+      0% { transform: translateX(-50%) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) scale(1.05); opacity: 0.9; }
+      100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  btn.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      alert('La instalación no está disponible ahora. Intenta más tarde.');
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(outcome === 'accepted' ? '✅ Usuario aceptó instalar' : '❌ Usuario rechazó');
+    deferredPrompt = null;
+    btn.style.display = 'none';
+  });
+  
+  document.body.appendChild(btn);
+}
+
+// Opcional: Oculta el botón si la app ya está instalada
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btnInstalar');
+  if (btn) btn.style.display = 'none';
+  console.log('✅ Mi Garaje fue instalada como PWA');
+});
+
 // DOM elements
 const productosContainer = document.getElementById('productosContainer');
 const paginationContainer = document.getElementById('paginationContainer');
