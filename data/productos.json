@@ -1,10 +1,6 @@
 {
   "version": "2026-05-23",
   "whatsappNumber": "5355551234",
-  "redesSociales": {
-    "facebook": "https://facebook.com/migarajecuba",
-    "instagram": "https://instagram.com/migarajecuba"
-  },
   "productos": [
     {
       "id": "mesa-pino-001",
