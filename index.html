@@ -7,7 +7,6 @@
   
   <!-- ==============================================
        META TAGS PARA SEO Y REDES SOCIALES
-       Mejoran el posicionamiento en Google y la vista previa al compartir
   ================================================== -->
   <meta name="description" content="Mi Garaje - Venta de hallazgos únicos en Cuba. Muebles restaurados, electrónica vintage, decoración. Envíos a toda la isla. Contacta por WhatsApp.">
   <meta name="keywords" content="venta de garaje Cuba, muebles vintage, electrónica antigua, decoración Cuba, hallazgos únicos">
@@ -26,7 +25,7 @@
   <!-- Para que la PWA sea instalable -->
   <link rel="manifest" href="manifest.json">
   
-  <!-- Icono para cuando se añade a la pantalla de inicio (Apple) -->
+  <!-- Icono para cuando se añade a la pantalla de inicio -->
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   
   <!-- CSS principal -->
@@ -34,8 +33,8 @@
 </head>
 <body>
   <!-- ==============================================
-       CABECERA PRINCIPAL
-       Gradiente llamativo: naranja a amarillo
+       CABECERA CON GRADIENTE LLAMATIVO
+       Solo conserva el botón de actualización
   ================================================== -->
   <header>
     <div class="header-top">
@@ -44,18 +43,9 @@
         <span class="tagline">Hallazgos únicos en Cuba</span>
       </div>
       <div class="header-buttons">
-        <!-- Botón de actualización manual -->
+        <!-- Único botón: actualización manual -->
         <button id="updateBtn" class="icon-btn" aria-label="Actualizar catálogo">🔄</button>
-        <!-- Botón de redes sociales (despliega opciones) -->
-        <button id="socialBtn" class="icon-btn" aria-label="Redes sociales">📱</button>
       </div>
-    </div>
-    
-    <!-- Panel de redes sociales (oculto por defecto) -->
-    <div id="socialPanel" class="social-panel" style="display: none;">
-      <a href="#" id="shareProductBtn" class="social-link">📤 Compartir producto</a>
-      <a href="#" id="facebookLink" class="social-link" target="_blank">📘 Facebook</a>
-      <a href="#" id="instagramLink" class="social-link" target="_blank">📷 Instagram</a>
     </div>
     
     <!-- ==============================================
@@ -76,7 +66,6 @@
     <div class="toolbar">
       <div class="filter-buttons">
         <button id="filterAllBtn" class="filter-btn active">Todos</button>
-        <!-- Las categorías se cargarán dinámicamente desde el JSON -->
         <div id="categoriasContainer" class="categorias-dinamicas"></div>
       </div>
       <div class="sort-controls">
