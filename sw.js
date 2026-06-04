@@ -3,7 +3,7 @@
 // CORREGIDO: Rutas relativas con './' para el precaché
 // ==================================================
 
-const CACHE_NAME = 'mi-garaje-v2';
+const CACHE_NAME = 'mi-garaje-v3';
 
 // CORREGIDO: Archivos a precachear con rutas relativas
 const ARCHIVOS_PRECACHE = [
