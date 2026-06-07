@@ -25,11 +25,11 @@
     {
       "id": "sillon-chester-003",
       "nombre": "Sillón Chesterfield",
-      "descripcion": "Sillón estilo Chesterfield, tapizado en terciopelo burdeos. Madera maciza.",
-      "precio": 18500,
+      "descripcion": "Clasico para emprendedores",
+      "precio": 1000,
       "moneda": "CUP",
-      "imagen": "images/sillon-chester-003.webp",
-      "categoria": "Muebles",
+      "imagen": "images/A toda marcha.jpg",
+      "categoria": "Libros",
       "fecha": "2026-05-18"
     },
     {
