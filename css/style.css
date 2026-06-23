@@ -1,24 +1,37 @@
 /* ==============================================
    MI GARAJE - ESTILOS PRINCIPALES
-   Colores llamativos para venta de garaje en Cuba
-   Gradiente naranja-amarillo en cabecera
-   SIN panel de redes sociales (más compacto)
+   Paleta de colores inspirada en Amazon
    ============================================== */
 
-/* Variables globales */
+/* Variables globales - Paleta Amazon */
 :root {
-  --gradiente-start: #FF6B35;
-  --gradiente-mid: #F4A261;
-  --gradiente-end: #FFB347;
-  --rojo-boton: #E63946;
+  --amazon-orange: #FF9900;
+  --amazon-dark: #131921;
+  --amazon-blue: #146EB4;
+  --amazon-light: #232F3E;
+  --amazon-yellow: #FEBD69;
+  --amazon-gray: #EAEDED;
+  --amazon-white: #FFFFFF;
+  --amazon-text: #111111;
+  --amazon-text-secondary: #565959;
+  --amazon-border: #DDDDDD;
+  --amazon-hover: #F0F0F0;
+  --amazon-success: #067D62;
+  --amazon-warning: #C7511F;
+  
+  /* Compatibilidad con variables existentes */
+  --gradiente-start: #232F3E;
+  --gradiente-mid: #131921;
+  --gradiente-end: #146EB4;
+  --rojo-boton: #C7511F;
   --verde-whatsapp: #25D366;
-  --fondo-general: #FFF8E7;
+  --fondo-general: #EAEDED;
   --fondo-tarjeta: #FFFFFF;
-  --texto: #2D3436;
-  --texto-secundario: #636E72;
-  --borde: #FFE0B5;
+  --texto: #111111;
+  --texto-secundario: #565959;
+  --borde: #DDDDDD;
   --sombra: rgba(0,0,0,0.1);
-  --admin-bg: #2D3436;
+  --admin-bg: #131921;
   --admin-texto: #FFFFFF;
 }
 
@@ -30,22 +43,22 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Amazon Ember", Arial, sans-serif;
   background-color: var(--fondo-general);
   color: var(--texto);
   line-height: 1.5;
   padding-bottom: 20px;
 }
 
-/* ========== CABECERA CON GRADIENTE ========== */
+/* ========== CABECERA ESTILO AMAZON ========== */
 header {
-  background: linear-gradient(135deg, var(--gradiente-start) 0%, var(--gradiente-mid) 50%, var(--gradiente-end) 100%);
+  background: linear-gradient(180deg, var(--amazon-dark) 0%, var(--amazon-light) 100%);
   color: white;
-  padding: 15px;
+  padding: 12px 15px;
   position: sticky;
   top: 0;
   z-index: 30;
-  box-shadow: 0 4px 15px var(--sombra);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .header-top {
@@ -64,174 +77,216 @@ header {
 .logo-area h1 {
   font-size: 1.8rem;
   cursor: pointer;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  color: var(--amazon-white);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.logo-area h1::after {
+  content: '.com';
+  color: var(--amazon-orange);
+  font-size: 0.7em;
 }
 
 .tagline {
-  font-size: 0.7rem;
-  opacity: 0.9;
+  font-size: 0.65rem;
+  opacity: 0.8;
   font-style: italic;
+  color: var(--amazon-yellow);
+  letter-spacing: 0.5px;
 }
 
 .header-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .icon-btn {
-  background: rgba(255,255,255,0.25);
-  border: none;
-  font-size: 1.4rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 1.2rem;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 30px;
+  padding: 6px 10px;
+  border-radius: 4px;
   transition: all 0.2s;
   color: white;
 }
 
 .icon-btn:hover {
-  background: rgba(255,255,255,0.4);
-  transform: scale(1.05);
+  border-color: var(--amazon-orange);
+  background: rgba(255,255,255,0.1);
 }
 
-/* ========== BUSCADOR ESTILO GOOGLE ========== */
+/* ========== BUSCADOR ESTILO AMAZON ========== */
 .search-container {
-  margin: 15px 0 10px 0;
+  margin: 12px 0 8px 0;
   position: relative;
 }
 
 .search-box {
   display: flex;
-  gap: 8px;
+  gap: 0;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.search-box:focus-within {
+  border-color: var(--amazon-orange);
+  box-shadow: 0 0 0 3px rgba(255,153,0,0.3);
 }
 
 #searchInput {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 50px;
-  font-size: 1rem;
-  background-color: white;
+  font-size: 0.95rem;
   color: var(--texto);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: white;
+  outline: none;
 }
 
 .clear-search {
-  background: var(--rojo-boton);
+  background: var(--amazon-orange);
   border: none;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  padding: 0 16px;
   font-size: 1.2rem;
   cursor: pointer;
-  color: white;
+  color: var(--amazon-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
 }
 
-/* Lista de sugerencias (autocompletar) */
+.clear-search:hover {
+  background: #e68a00;
+}
+
+/* Lista de sugerencias estilo Amazon */
 .suggestions-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   max-height: 250px;
   overflow-y: auto;
   z-index: 40;
-  margin-top: 5px;
+  margin-top: 2px;
+  border: 1px solid var(--amazon-border);
 }
 
 .suggestion-item {
-  padding: 12px 16px;
+  padding: 10px 16px;
   cursor: pointer;
-  border-bottom: 1px solid var(--borde);
+  border-bottom: 1px solid var(--amazon-border);
   transition: background 0.1s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .suggestion-item:hover {
-  background: var(--fondo-general);
+  background: var(--amazon-hover);
 }
 
 .suggestion-nombre {
-  font-weight: bold;
+  font-weight: normal;
   color: var(--texto);
 }
 
 .suggestion-categoria {
   font-size: 0.7rem;
   color: var(--texto-secundario);
-  margin-left: 8px;
+  background: var(--amazon-gray);
+  padding: 2px 8px;
+  border-radius: 10px;
 }
 
-/* ========== FILTROS Y ORDENAMIENTO ========== */
+/* ========== FILTROS ESTILO AMAZON ========== */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin: 10px 0;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .filter-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
 .filter-btn {
-  background: rgba(255,255,255,0.25);
-  border: none;
-  padding: 6px 14px;
-  border-radius: 25px;
+  background: var(--amazon-gray);
+  border: 1px solid var(--amazon-border);
+  padding: 4px 12px;
+  border-radius: 4px;
   font-size: 0.8rem;
   cursor: pointer;
-  color: white;
+  color: var(--texto);
   transition: all 0.2s;
 }
 
 .filter-btn.active {
-  background: white;
-  color: var(--gradiente-start);
+  background: var(--amazon-orange);
+  color: var(--amazon-dark);
+  border-color: var(--amazon-orange);
   font-weight: bold;
+}
+
+.filter-btn:hover:not(.active) {
+  background: var(--amazon-hover);
 }
 
 .categorias-dinamicas {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .sort-select {
-  background: rgba(255,255,255,0.25);
-  border: none;
-  padding: 6px 12px;
-  border-radius: 25px;
-  color: white;
+  background: white;
+  border: 1px solid var(--amazon-border);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--texto);
   font-size: 0.8rem;
   cursor: pointer;
+  outline: none;
 }
 
-.sort-select option {
-  color: var(--texto);
+.sort-select:focus {
+  border-color: var(--amazon-orange);
 }
 
 .result-count {
   font-size: 0.75rem;
-  background: rgba(0,0,0,0.2);
-  padding: 4px 10px;
-  border-radius: 20px;
+  background: var(--amazon-gray);
+  padding: 2px 10px;
+  border-radius: 4px;
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 4px;
+  color: var(--texto-secundario);
 }
 
 /* ========== BARRA DE PROGRESO ========== */
 .progress-container {
   margin: 15px;
-  background-color: var(--borde);
-  border-radius: 10px;
+  background-color: var(--amazon-border);
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -243,7 +298,7 @@ header {
 .progress-fill {
   width: 0%;
   height: 100%;
-  background-color: var(--verde-whatsapp);
+  background-color: var(--amazon-success);
   transition: width 0.3s;
 }
 
@@ -258,24 +313,30 @@ header {
 .productos-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 16px;
   padding: 15px;
   max-width: 600px;
   margin: 0 auto;
 }
 
-/* Tarjeta de producto (colapsada por defecto) */
+/* Tarjeta de producto estilo Amazon */
 .producto-card {
   background-color: var(--fondo-tarjeta);
-  border-radius: 16px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px var(--sombra);
-  transition: all 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
   cursor: pointer;
+  border: 1px solid var(--amazon-border);
+}
+
+.producto-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .producto-card.expandida {
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border-color: var(--amazon-orange);
 }
 
 /* Imagen del producto */
@@ -283,7 +344,7 @@ header {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  background-color: var(--borde);
+  background-color: var(--amazon-gray);
   transition: height 0.3s;
 }
 
@@ -293,38 +354,49 @@ header {
 
 /* Contenido */
 .producto-info {
-  padding: 15px;
+  padding: 12px 16px;
 }
 
 .producto-nombre {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: var(--texto);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--amazon-blue);
+  cursor: pointer;
+}
+
+.producto-nombre:hover {
+  color: var(--amazon-orange);
+  text-decoration: underline;
 }
 
 .producto-precio {
-  color: var(--gradiente-start);
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin: 5px 0;
+  color: var(--amazon-dark);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 4px 0;
+}
+
+.producto-precio::before {
+  content: '$';
+  font-size: 0.8em;
 }
 
 .producto-categoria {
   display: inline-block;
-  background: var(--borde);
-  padding: 3px 10px;
-  border-radius: 15px;
+  background: var(--amazon-gray);
+  padding: 2px 10px;
+  border-radius: 4px;
   font-size: 0.7rem;
-  margin: 5px 0;
+  margin: 4px 0;
   color: var(--texto-secundario);
 }
 
-/* Descripción (truncada en modo colapsado) */
+/* Descripción */
 .producto-descripcion {
   font-size: 0.85rem;
   color: var(--texto-secundario);
-  margin: 8px 0;
+  margin: 6px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -338,30 +410,35 @@ header {
   display: block;
 }
 
-/* Botones dentro de la tarjeta */
+/* Botones estilo Amazon */
 .card-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .ver-mas-btn, .whatsapp-btn, .compartir-btn {
   flex: 1;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
   text-align: center;
-  font-size: 0.85rem;
-  font-weight: bold;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
   text-decoration: none;
   display: inline-block;
-  transition: transform 0.1s;
+  transition: all 0.2s;
 }
 
 .ver-mas-btn {
-  background-color: var(--borde);
+  background-color: var(--amazon-gray);
   color: var(--texto);
+  border-color: var(--amazon-border);
+}
+
+.ver-mas-btn:hover {
+  background-color: var(--amazon-hover);
 }
 
 .whatsapp-btn {
@@ -369,9 +446,17 @@ header {
   color: white;
 }
 
+.whatsapp-btn:hover {
+  background-color: #1da85c;
+}
+
 .compartir-btn {
-  background-color: var(--gradiente-start);
-  color: white;
+  background-color: var(--amazon-orange);
+  color: var(--amazon-dark);
+}
+
+.compartir-btn:hover {
+  background-color: #e68a00;
 }
 
 .card-buttons button:active, .card-buttons a:active {
@@ -383,56 +468,64 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px;
   margin-top: 10px;
   flex-wrap: wrap;
 }
 
 .page-btn {
-  background-color: var(--gradiente-start);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.page-number {
-  background: var(--fondo-tarjeta);
-  border: 1px solid var(--borde);
-  padding: 6px 12px;
-  border-radius: 6px;
+  background-color: var(--amazon-gray);
+  color: var(--texto);
+  border: 1px solid var(--amazon-border);
+  padding: 6px 14px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.2s;
 }
 
+.page-btn:hover:not(:disabled) {
+  background-color: var(--amazon-hover);
+  border-color: var(--amazon-orange);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.page-number {
+  background: white;
+  border: 1px solid var(--amazon-border);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  color: var(--amazon-blue);
+}
+
 .page-number.active {
-  background: var(--gradiente-start);
-  color: white;
-  border-color: var(--gradiente-start);
+  background: var(--amazon-orange);
+  color: var(--amazon-dark);
+  border-color: var(--amazon-orange);
+  font-weight: bold;
 }
 
 .page-number:hover:not(.active) {
-  background: var(--borde);
+  background: var(--amazon-hover);
+  border-color: var(--amazon-orange);
 }
 
-/* ========== MODAL ADMIN (panel vendedor) ========== */
+/* ========== MODAL ADMIN ========== */
 .modal {
   display: none;
   position: fixed;
@@ -441,7 +534,7 @@ header {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0,0,0,0.6);
   overflow-y: auto;
 }
 
@@ -452,13 +545,13 @@ header {
   padding: 20px;
   width: 90%;
   max-width: 500px;
-  border-radius: 20px;
+  border-radius: 8px;
   animation: modalEntrada 0.2s ease-out;
 }
 
 @keyframes modalEntrada {
   from {
-    transform: translateY(-30px);
+    transform: translateY(-20px);
     opacity: 0;
   }
   to {
@@ -478,6 +571,11 @@ header {
   font-size: 1.8rem;
   cursor: pointer;
   color: var(--admin-texto);
+  opacity: 0.7;
+}
+
+.close-admin-modal:hover {
+  opacity: 1;
 }
 
 #adminStats {
@@ -487,28 +585,28 @@ header {
 .stats-section {
   margin-bottom: 20px;
   padding: 12px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
 }
 
 .stats-section h3 {
   margin-bottom: 10px;
-  font-size: 1rem;
-  border-left: 3px solid var(--gradiente-start);
+  font-size: 0.95rem;
+  border-left: 3px solid var(--amazon-orange);
   padding-left: 10px;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .stat-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0;
+  padding: 4px 0;
 }
 
 .stat-label {
@@ -518,44 +616,51 @@ header {
 
 .stat-value {
   font-weight: bold;
+  color: var(--amazon-yellow);
 }
 
 .categoria-stats {
   display: flex;
   justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .copy-stats-btn {
-  background-color: var(--gradiente-start);
-  color: white;
+  background-color: var(--amazon-orange);
+  color: var(--amazon-dark);
   border: none;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   width: 100%;
   margin-top: 10px;
+  font-weight: 500;
+  transition: background 0.2s;
 }
 
-/* ========== NOTIFICACIÓN DE ACTUALIZACIÓN ========== */
+.copy-stats-btn:hover {
+  background-color: #e68a00;
+}
+
+/* ========== NOTIFICACIÓN ========== */
 .update-notification {
   position: fixed;
   bottom: 20px;
   left: 20px;
   right: 20px;
-  background-color: var(--gradiente-start);
+  background-color: var(--amazon-dark);
   color: white;
-  padding: 15px;
-  border-radius: 16px;
+  padding: 14px 18px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
   z-index: 50;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   animation: slideUp 0.3s ease-out;
 }
 
@@ -571,31 +676,39 @@ header {
 }
 
 .update-notification button {
-  padding: 8px 16px;
-  border-radius: 25px;
+  padding: 6px 16px;
+  border-radius: 4px;
   border: none;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .update-yes {
-  background-color: white;
-  color: var(--gradiente-start);
+  background-color: var(--amazon-orange);
+  color: var(--amazon-dark);
+}
+
+.update-yes:hover {
+  background-color: #e68a00;
 }
 
 .update-no {
-  background-color: rgba(255,255,255,0.3);
+  background-color: rgba(255,255,255,0.2);
   color: white;
 }
 
-/* ========== MENSAJE OFFLINE ========== */
+.update-no:hover {
+  background-color: rgba(255,255,255,0.3);
+}
+
+/* ========== OFFLINE ========== */
 .offline-msg {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #F4A261;
-  color: var(--texto);
+  background-color: var(--amazon-warning);
+  color: white;
   text-align: center;
   padding: 8px;
   font-size: 0.8rem;
