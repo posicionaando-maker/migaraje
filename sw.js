@@ -1,96 +1,111 @@
-// ==================================================
-// sw.js - SERVICE WORKER
-// CORREGIDO: Rutas relativas con './' para el precaché
-// ==================================================
-
-const CACHE_NAME = 'mi-garaje-v2';
-
-// CORREGIDO: Archivos a precachear con rutas relativas
-const ARCHIVOS_PRECACHE = [
-  './',
-  './index.html',
-  './css/style.css',
-  './js/app.js',
-  './js/sw-register.js',
-  './manifest.json',
-  './data/productos.json'
+const CACHE_NAME = "mi-garaje-v3"; // 🔥 Cambia la versión para forzar actualización
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./style.css",
+  "./app.js",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png",
 ];
 
-// INSTALACIÓN
-self.addEventListener('install', event => {
-  console.log('🛠️ Service Worker instalando...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('📦 Archivos precacheados');
-        return cache.addAll(ARCHIVOS_PRECACHE);
-      })
-      .then(() => self.skipWaiting())
+// 🔥 Nueva: URLs de imágenes que NO deben cachearse en alta resolución
+const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
+
+// Instalación
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("📦 Cacheando recursos estáticos (v2)...");
+      return cache.addAll(ASSETS).catch((err) => {
+        console.error("❌ Error cacheando recursos:", err);
+      });
+    })
   );
+  self.skipWaiting();
 });
 
-// ACTIVACIÓN
-self.addEventListener('activate', event => {
-  console.log('⚡ Service Worker activado');
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
+// Activación: limpiar caches antiguas
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            console.log('🗑️ Eliminando caché antigua:', cache);
-            return caches.delete(cache);
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log("🗑️ Eliminando cache antigua:", key);
+            return caches.delete(key);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
+  self.clients.claim();
 });
 
-// FETCH (Sin cambios mayores, pero las URLs se manejan solas)
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
+// Intercepción de fetch - CORREGIDA
+self.addEventListener("fetch", (e) => {
+  const url = new URL(e.request.url);
   
-  if (url.pathname.includes('/images/')) {
-    event.respondWith(
-      caches.match(event.request).then(respuestaCache => {
-        if (respuestaCache) {
-          fetch(event.request).then(respuestaRed => {
-            if (respuestaRed && respuestaRed.status === 200) {
-              caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed));
+  // 🔥 Estrategia: "Stale-While-Revalidate" para imágenes
+  // Primero devuelve la caché (si existe), luego actualiza en segundo plano
+  if (IMAGE_EXTENSIONS.test(url.pathname)) {
+    e.respondWith(
+      caches.match(e.request).then((cached) => {
+        // 🔥 Si está en caché, devuélvela PERO actualiza en segundo plano
+        const fetchPromise = fetch(e.request)
+          .then((res) => {
+            if (res && res.status === 200) {
+              const resClone = res.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                // 🔥 Guarda la imagen, pero solo si es menor a 500 KB
+                // (evita cachear imágenes demasiado pesadas)
+                const contentLength = res.headers.get("content-length");
+                if (contentLength && parseInt(contentLength) < 500 * 1024) {
+                  cache.put(e.request, resClone);
+                }
+              });
             }
-          }).catch(() => {});
-          return respuestaCache;
+            return res;
+          })
+          .catch(() => {
+            // Si falla la red, devuelve un placeholder en lugar de icon-192.png
+            return new Response(
+              `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+                <rect width="400" height="400" fill="#EAEDED"/>
+                <text x="200" y="200" font-family="Arial" font-size="20" fill="#565959" text-anchor="middle" dominant-baseline="central">
+                  🖼️
+                </text>
+              </svg>`,
+              {
+                headers: { "Content-Type": "image/svg+xml" },
+              }
+            );
+          });
+
+        // 🔥 Si hay caché, devuélvela inmediatamente y actualiza en segundo plano
+        if (cached) {
+          // Actualizar en segundo plano sin esperar
+          e.waitUntil(fetchPromise.catch(() => {}));
+          return cached;
         }
-        return fetch(event.request).then(respuestaRed => {
-          const copia = respuestaRed.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copia));
-          return respuestaRed;
-        }).catch(() => caches.match('/icons/icon-192.png'));
+        return fetchPromise;
       })
     );
+    return;
   }
-  else if (url.pathname.includes('/data/')) {
-    event.respondWith(
-      caches.match(event.request).then(respuestaCache => {
-        const respuestaRed = fetch(event.request).then(respuestaRed => {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed.clone()));
-          return respuestaRed;
-        }).catch(() => respuestaCache);
-        return respuestaCache || respuestaRed;
-      })
-    );
-  }
-  else {
-    event.respondWith(
-      caches.match(event.request).then(respuestaCache => {
-        return respuestaCache || fetch(event.request).then(respuestaRed => {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, respuestaRed.clone()));
-          return respuestaRed;
+
+  // 🔥 Para el resto de recursos (HTML, CSS, JS): estrategia "Network First"
+  e.respondWith(
+    fetch(e.request)
+      .then((res) => {
+        const resClone = res.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, resClone);
         });
-      }).catch(() => {
-        if (event.request.mode === 'navigate') return caches.match('./index.html');
-        return new Response('Offline', { status: 503 });
+        return res;
       })
-    );
-  }
+      .catch(() => {
+        return caches.match(e.request);
+      })
+  );
 });
