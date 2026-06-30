@@ -339,18 +339,26 @@ header {
   border-color: var(--amazon-orange);
 }
 
-/* Imagen del producto */
+/* ============================================================
+   🖼️ IMAGEN DEL PRODUCTO - CORREGIDA
+   ============================================================ */
 .producto-imagen {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  aspect-ratio: 1 / 1;           /* 🔥 Mantiene proporción cuadrada */
+  object-fit: cover;              /* 🔥 Recorta para llenar sin distorsionar */
   background-color: var(--amazon-gray);
-  transition: height 0.3s;
+  display: block;                 /* 🔥 Elimina espacio extra debajo */
+  transition: aspect-ratio 0.3s ease; /* Suaviza el cambio al expandir */
 }
 
+/* Al expandir la tarjeta, la imagen se vuelve panorámica */
 .producto-card.expandida .producto-imagen {
-  height: 300px;
+  aspect-ratio: 16 / 9;           /* 🔥 Relación panorámica al expandir */
 }
+
+/* ============================================================
+   FIN DE LA SECCIÓN CORREGIDA
+   ============================================================ */
 
 /* Contenido */
 .producto-info {
@@ -758,4 +766,25 @@ header {
   .card-buttons {
     flex-wrap: wrap;
   }
+}
+
+/* ============================================================
+   🆕 MEJORA ADICIONAL: Placeholder de carga
+   ============================================================ */
+.producto-imagen::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+/* Placeholder visual mientras carga la imagen */
+.producto-imagen:not([src]) {
+  background: linear-gradient(135deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 400% 400%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
