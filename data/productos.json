@@ -13,13 +13,13 @@
       "fecha": "2026-05-20"
     },
     {
-      "id": "lampara-art-deco-002",
-      "nombre": "Lámpara Art Decó",
-      "descripcion": "Lámpara de mesa estilo Art Decó, años 40. Pantalla de vidrio esmerilado, base de bronce restaurada.",
-      "precio": 3200,
-      "moneda": "CUP",
-      "imagen": "images/lampara-art-deco-002.webp",
-      "categoria": "Decoración",
+      "id": "tenis bape ",
+      "nombre": "Tenis Bape No. 42",
+      "descripcion": "Tenis Bape No. 42, calidad G5",
+      "precio": 45 USD,
+      "moneda": "USD",
+      "imagen": "images/bape.jpg",
+      "categoria": "Tenis",
       "fecha": "2026-05-19"
     },
     {
