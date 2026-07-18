@@ -16,7 +16,7 @@
       "id": "tenis bape ",
       "nombre": "Tenis Bape No. 42",
       "descripcion": "Tenis Bape No. 42, calidad G5",
-      "precio": 45 USD,
+      "precio": 45,
       "moneda": "USD",
       "imagen": "images/bape.jpg",
       "categoria": "Tenis",
